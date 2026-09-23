@@ -1,0 +1,204 @@
+---
+import HeroGrid from "./HeroGrid.astro";
+---
+
+<section
+  id="hero"
+  class="relative "
+>
+  <div
+    data-hero-sequence
+    class="relative h-[200svh]"
+  >
+    <div
+      data-hero-stage
+      class="
+        sticky
+        top-0
+        flex
+        h-svh
+        flex-col
+        overflow-hidden
+      "
+    >
+      <!-- GRID -->
+      <HeroGrid />
+
+      <!-- HEADER -->
+      <div data-header-anchor class="shrink-0">
+       <header
+    data-site-header
+    class="
+      relative
+      z-20
+      flex
+      shrink-0
+      items-center
+      justify-between
+
+      bg-[var(--color-background)]
+      text-[var(--color-foreground)]
+
+      px-[var(--page-padding)]
+      py-4
+
+      text-base
+      font-medium
+      leading-none
+
+      sm:text-lg
+      md:py-5
+      md:text-xl
+    "
+  >
+    <!-- BRAND -->
+    <a
+      href="/"
+      class="
+        transition-opacity
+        duration-200
+        hover:opacity-60
+      "
+    >
+      Inicio
+    </a>
+
+    <!-- DESKTOP NAV -->
+    <nav class="hidden md:block">
+      <ul
+        class="
+          flex
+          items-center
+          gap-6
+          lg:gap-8
+        "
+      >
+        <li>
+          <a
+            href="#proyectos"
+            class="
+              transition-opacity
+              duration-200
+              hover:opacity-60
+            "
+          >
+            Proyectos
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#sobre-mi"
+            class="
+              transition-opacity
+              duration-200
+              hover:opacity-60
+            "
+          >
+            Información
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- MENU -->
+    <button
+      type="button"
+      class="
+        cursor-pointer
+        transition-opacity
+        duration-200
+        hover:opacity-60
+      "
+    >
+      Menu
+    </button>
+  </header>
+      </div>
+
+      <div class="flex-1"></div>
+
+      <footer
+        data-hero-footer
+        class="
+          flex
+          shrink-0
+          items-end
+          justify-between
+          gap-6
+          px-4
+          pb-4
+          md:px-6
+          md:pb-6
+        "
+      >
+        <span class="shrink-0">
+          ●
+        </span>
+
+        <div
+          class="
+            flex
+            min-w-0
+            items-end
+            justify-end
+            gap-3
+            md:gap-5
+          "
+        >
+          <p
+            class="
+              max-w-[16rem]
+              text-right
+              text-sm
+              leading-tight
+              md:max-w-none
+              md:text-base
+            "
+          >
+            Arquitectura, Diseño, Dirección de obra
+          </p>
+
+          <span class="shrink-0">
+            ↓
+          </span>
+        </div>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<style>
+  [data-site-header].is-fixed {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const anchor = document.querySelector<HTMLElement>("[data-header-anchor]");
+
+  if (header && anchor) {
+    const updateHeader = () => {
+      // Conserva el espacio original para que fijar el header no cambie el layout.
+      anchor.style.height = `${header.offsetHeight}px`;
+      header.classList.toggle("is-fixed", anchor.getBoundingClientRect().top <= 0);
+    };
+
+    let rafId = 0;
+    const scheduleUpdate = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        updateHeader();
+      });
+    };
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    new ResizeObserver(scheduleUpdate).observe(header);
+    updateHeader();
+  }
+</script>

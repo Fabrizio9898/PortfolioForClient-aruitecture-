@@ -4,13 +4,21 @@ interface Props {
   class?: string;
 }
 
-const { id, class: className = "" } = Astro.props;
+const {
+  id,
+  class: className = "",
+} = Astro.props;
 ---
 
 <section
   id={id}
   data-section={id}
-  class:list={["scroll-m-20", className]}
+  class:list={[
+    "scroll-m-20",
+    "px-(--page-padding)",
+    "pt-24 md:pt-36",
+    className,
+  ]}
 >
   <slot />
 </section>

@@ -1,13 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Header from "../components/Layout/Header.astro";
 import SectionContainer from "../components/Section_Container.astro";
 import ProjectCollection from "../components/ProjectCollection.astro";
+import Hero from "../components/Hero/Hero.astro";
+import TitleSection from "../components/TitleSection.astro";
+
+import { Image } from "astro:assets";
+import profilePicture from "../assets/profile/profilePicture.png";
 
 import { site } from "../config/site";
 import { getProjects } from "../data/projects";
 import { websiteJsonLd } from "../lib/structured-data";
-import Hero from "../components/Hero.astro";
 
 const projects = await getProjects();
 ---
@@ -20,21 +23,132 @@ const projects = await getProjects();
   }}
   jsonLd={websiteJsonLd()}
 >
-<Hero/>
+  <Hero />
+
   <main
-  id="main-content"
-  class="px-4 md:px-6 lg:px-8"
->
-  <div class="space-y-24">
+    id="main-content"
+    class="pb-24 md:pb-36"
+  >
+    <!-- PROYECTOS -->
     <SectionContainer id="proyectos">
+ <TitleSection class="text-right">
+  Proyectos Destacados
+</TitleSection>
+
       <ProjectCollection projects={projects} />
     </SectionContainer>
-    <SectionContainer id="sobre-mi">
-      <h2>Sobre mí</h2>
-      <p>
-        Soy un arquitecto apasionado por el diseño y la innovación. Me especializo en crear espacios funcionales y estéticamente atractivos que mejoren la calidad de vida de las personas.
-      </p>
-    </SectionContainer>
+
+    <!-- SOBRE FEDERICO -->
+   <SectionContainer id="sobre-mi">
+  <TitleSection>
+    Sobre Federico
+  </TitleSection>
+
+  <div
+    class="
+      flex
+      flex-col
+      gap-8
+      md:flex-row
+      md:items-start
+      md:justify-between
+    "
+  >
+    <!-- CONTENIDO -->
+    <div
+      class="
+        order-2
+        flex
+        flex-1
+        flex-col
+        gap-10
+        md:order-1
+      "
+    >
+      <!-- INFORMACIÓN -->
+      <div class="flex flex-col gap-6">
+        <div>
+          <h2>
+            Federico Dávalos
+          </h2>
+
+          <p>
+            Arquitecto
+          </p>
+
+          <p>
+            Buenos Aires, Argentina
+          </p>
+        </div>
+
+        <!-- REDES -->
+        <div
+          class="
+            flex
+            flex-wrap
+            gap-x-6
+            gap-y-2
+          "
+        >
+          <a href="#">
+            Instagram ↗
+          </a>
+
+          <a href="#">
+            LinkedIn ↗
+          </a>
+
+          <a href="mailto:correo@ejemplo.com">
+            Email ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div
+        class="
+          flex
+          flex-col
+          gap-4
+        "
+      >
+        <p>
+          Federico Dávalos es arquitecto con más de
+          cinco años de experiencia en el desarrollo
+          de proyectos arquitectónicos.
+        </p>
+
+        <p>
+          Su práctica se desarrolla entre la
+          arquitectura, el diseño y la dirección
+          de obra.
+        </p>
+      </div>
+    </div>
+
+    <!-- IMAGEN -->
+    <div
+      class="
+        order-1
+        w-full
+        shrink-0
+        md:order-2
+        md:w-64
+      "
+    >
+      <Image
+        src={profilePicture}
+        alt="Federico Dávalos"
+        class="
+          aspect-square
+          h-full
+          w-full
+          object-cover
+        "
+        style="object-position: 50% 50%"
+      />
+    </div>
   </div>
-</main>
+</SectionContainer>
+  </main>
 </BaseLayout>

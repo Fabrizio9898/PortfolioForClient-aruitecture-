@@ -1,0 +1,362 @@
+---
+import { Image } from "astro:assets";
+import { heroSlots } from "../../data/hero";
+---
+
+<div
+  data-hero-grid
+  class="
+    grid
+    h-[48svh]
+    shrink-0
+    grid-cols-2
+    grid-rows-2
+
+    md:h-[44svh]
+    md:grid-cols-3
+    md:grid-rows-1
+  "
+>
+  {
+    heroSlots.map((slot, index) => (
+      <div
+        data-hero-slot
+        data-slot={index}
+        class:list={[
+          "relative overflow-hidden",
+          index === 3 && "md:hidden",
+        ]}
+      >
+        <div
+          data-hero-track
+          class="
+            absolute
+            inset-x-0
+            top-0
+            h-[200%]
+            will-change-transform
+          "
+        >
+          <!-- FIRST -->
+          <div class="h-1/2 w-full">
+            {slot.first.type === "image" ? (
+              <Image
+                src={slot.first.image}
+                alt=""
+                class="
+                  block
+                  h-full
+                  w-full
+                  object-cover
+                "
+              />
+            ) : (
+              <div
+                class="
+                  flex
+                  h-full
+                  w-full
+                  items-center
+                  justify-center
+                  bg-black
+                  px-6
+                  text-center
+                "
+              >
+                <p
+                  class="
+                    text-[clamp(1.75rem,7vw,3rem)]
+                    font-bold
+                    leading-[0.95]
+                    tracking-[0.04em]
+
+                    md:text-[clamp(2.5rem,4vw,5rem)]
+                    md:tracking-[0.06em]
+                  "
+                >
+                  {slot.first.lines.map((line) => (
+                    <span class="block">
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <!-- SECOND -->
+          <div class="h-1/2 w-full">
+            <Image
+              src={slot.second.image}
+              alt=""
+              class="
+                block
+                h-full
+                w-full
+                object-cover
+              "
+            />
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  function initHeroGrid() {
+    const grid =
+      document.querySelector<HTMLElement>(
+        "[data-hero-grid]"
+      );
+
+    if (!grid) return;
+
+    const slots =
+      grid.querySelectorAll<HTMLElement>(
+        "[data-hero-slot]"
+      );
+
+    if (!slots.length) return;
+
+    /*
+     * Buscamos sequence y stage.
+     */
+    const sequenceEl =
+      grid.closest<HTMLElement>(
+        "[data-hero-sequence]"
+      );
+
+    const stageEl =
+      grid.closest<HTMLElement>(
+        "[data-hero-stage]"
+      );
+
+    if (!sequenceEl || !stageEl) return;
+
+    /*
+     * Referencias ya validadas.
+     * Así TypeScript sabe que NO son null.
+     */
+    const sequence: HTMLElement = sequenceEl;
+    const stage: HTMLElement = stageEl;
+
+    let targetProgress = 0;
+    let currentProgress = 0;
+
+    let rafId = 0;
+
+    /*
+     * SMOOTH
+     *
+     * 0.05 = más suave / pesado
+     * 0.075 = recomendado
+     * 0.10 = más reactivo
+     * 0.15 = bastante directo
+     */
+    const ease = 0.075;
+
+    /*
+     * Calcula dónde estamos dentro
+     * de la secuencia completa del Hero.
+     *
+     * Devuelve un número entre 0 y 1.
+     */
+    function getScrollProgress() {
+      const distance = Math.max(
+        sequence.offsetHeight -
+          stage.offsetHeight,
+        1
+      );
+
+      const progress =
+        -sequence.getBoundingClientRect().top /
+        distance;
+
+      return Math.min(
+        Math.max(progress, 0),
+        1
+      );
+    }
+
+    /*
+     * Renderiza las cards según
+     * el progreso suavizado.
+     */
+    function render(progress: number) {
+      /*
+       * Importante para responsive:
+       *
+       * en mobile pueden existir 4 slots,
+       * mientras que desktop puede ocultar uno.
+       */
+      const visibleSlots =
+        Array.from(slots).filter(
+          (slot) => slot.clientHeight > 0
+        );
+
+      visibleSlots.forEach(
+        (slot, index) => {
+          const track =
+            slot.querySelector<HTMLElement>(
+              "[data-hero-track]"
+            );
+
+          if (!track) return;
+
+          /*
+           * Cada card tiene su propio
+           * tramo de la animación.
+           *
+           * CARD 1
+           * ↓
+           * CARD 2
+           * ↓
+           * CARD 3
+           * ↓
+           * etc.
+           */
+          const slotProgress = Math.min(
+            Math.max(
+              progress *
+                visibleSlots.length -
+                index,
+              0
+            ),
+            1
+          );
+
+          /*
+           * El track mide 200%.
+           *
+           * Al moverlo exactamente
+           * una altura de slot:
+           *
+           * FIRST desaparece
+           * SECOND aparece.
+           */
+          const y =
+            slot.clientHeight *
+            slotProgress;
+
+          track.style.transform =
+            `translate3d(0, -${y}px, 0)`;
+        }
+      );
+    }
+
+    /*
+     * Loop de suavizado.
+     *
+     * targetProgress:
+     * posición REAL del scroll.
+     *
+     * currentProgress:
+     * posición VISUAL.
+     *
+     * current persigue suavemente
+     * a target.
+     */
+    function animate() {
+      currentProgress +=
+        (
+          targetProgress -
+          currentProgress
+        ) * ease;
+
+      /*
+       * Evitamos que la animación
+       * continúe infinitamente por
+       * diferencias microscópicas.
+       */
+      const difference =
+        Math.abs(
+          targetProgress -
+          currentProgress
+        );
+
+      if (difference < 0.0001) {
+        currentProgress =
+          targetProgress;
+      }
+
+      render(currentProgress);
+
+      /*
+       * Continuamos únicamente mientras
+       * quede movimiento pendiente.
+       */
+      if (
+        Math.abs(
+          targetProgress -
+          currentProgress
+        ) > 0.0001
+      ) {
+        rafId =
+          requestAnimationFrame(
+            animate
+          );
+      } else {
+        rafId = 0;
+      }
+    }
+
+    /*
+     * Cuando hacemos scroll NO movemos
+     * directamente las cards.
+     *
+     * Solo actualizamos el objetivo.
+     */
+    function onScroll() {
+      targetProgress =
+        getScrollProgress();
+
+      if (!rafId) {
+        rafId =
+          requestAnimationFrame(
+            animate
+          );
+      }
+    }
+
+    /*
+     * Resize:
+     *
+     * recalculamos dimensiones y
+     * sincronizamos inmediatamente.
+     */
+    function onResize() {
+      targetProgress =
+        getScrollProgress();
+
+      currentProgress =
+        targetProgress;
+
+      render(currentProgress);
+    }
+
+    window.addEventListener(
+      "scroll",
+      onScroll,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "resize",
+      onResize
+    );
+
+    /*
+     * Estado inicial.
+     */
+    targetProgress =
+      getScrollProgress();
+
+    currentProgress =
+      targetProgress;
+
+    render(currentProgress);
+  }
+
+  initHeroGrid();
+</script>
