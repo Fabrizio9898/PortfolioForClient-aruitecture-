@@ -14,6 +14,16 @@
 
   --color-border: rgba(255, 255, 255, 0.16);
 
+  /* Acentos — lima / ámbar. Solo cambiar estos tokens para otra paleta.
+     Alternativa tierra: primary #D58B70, secondary #A6B39A,
+     tertiary #D8C5A4. Los tonos derivados se actualizan automáticamente. */
+  --color-accent-primary: #e69802;
+  --color-accent-secondary: #b7c879;
+  --color-accent-tertiary: #d8c18d;
+  --color-accent-soft: color-mix(in srgb, var(--color-accent-tertiary) 12%, var(--color-background));
+  --color-accent-border: color-mix(in srgb, var(--color-accent-primary) 60%, var(--color-background));
+  --color-accent-foreground: var(--color-background);
+
   /* Typography */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -103,6 +113,51 @@ a {
   text-decoration: none;
 }
 
+/* Puntuación editorial: enlaces identificables también sin hover. */
+.accent-link,
+.accent-title {
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-accent-border);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.accent-link,
+.accent-arrow {
+  color: var(--color-accent-primary);
+}
+
+.accent-indicator {
+  color: var(--color-accent-secondary);
+}
+
+.accent-category {
+  color: var(--color-accent-tertiary);
+  background: var(--color-accent-soft);
+}
+
+.accent-nav:is([aria-current="page"], [aria-current="location"], .is-active) {
+  color: var(--color-accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+  .accent-link:hover,
+  .accent-title:hover,
+  .accent-nav:hover {
+    color: var(--color-accent-primary);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-accent-primary);
+    text-underline-offset: 0.2em;
+  }
+}
+
+::selection {
+  color: var(--color-accent-foreground);
+  background: var(--color-accent-primary);
+}
+
 
 /* ========================================
    ACCESSIBILITY
@@ -116,8 +171,8 @@ a {
 
   padding: 0.75rem;
 
-  background: var(--color-foreground);
-  color: var(--color-background);
+  background: var(--color-accent-primary);
+  color: var(--color-accent-foreground);
 
   transform: translateY(-100%);
 }
@@ -127,6 +182,6 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 3px;
 }

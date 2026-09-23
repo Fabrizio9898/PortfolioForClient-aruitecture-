@@ -10,7 +10,7 @@ const { project } = Astro.props;
 ---
 
 <header class="project-header">
-  <p><a href="/">All projects</a></p>
+  <p><a class="accent-link" href="/">All projects</a></p>
   <h1>{project.title}</h1>
   <p class="project-description">{project.description}</p>
   <ProjectMetadata project={project} />

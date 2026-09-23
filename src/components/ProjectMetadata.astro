@@ -22,7 +22,7 @@ const metadata = [
     {metadata.map(([label, value]) => (
       <div>
         <dt>{label}</dt>
-        <dd>{value}</dd>
+        <dd>{label === "Type" ? <span class="accent-category">{value}</span> : value}</dd>
       </div>
     ))}
   </dl>

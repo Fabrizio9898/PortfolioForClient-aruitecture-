@@ -5,9 +5,10 @@ interface Props {
   media: Media;
   eager?: boolean;
   sizes?: string;
+    showCaption?: boolean;
 }
 
-const { media, eager = false, sizes = "100vw" } = Astro.props;
+const { media, eager = false, sizes = "100vw" ,showCaption=true} = Astro.props;
 const srcset = media.sources
   ?.map(({ src, width }) => `${src} ${width}w`)
   .join(", ");
@@ -25,13 +26,27 @@ const srcset = media.sources
       loading={eager ? "eager" : "lazy"}
       fetchpriority={eager ? "high" : "auto"}
       decoding="async"
+       class="
+        block
+        h-auto
+        w-full
+        object-cover
+      "
     />
   </picture>
-  {(media.caption || media.credit) && (
-    <figcaption>
-      {media.caption}
-      {media.caption && media.credit && " — "}
-      {media.credit && <span>Credit: {media.credit}</span>}
-    </figcaption>
-  )}
+  {
+    showCaption && (media.caption || media.credit) && (
+      <figcaption>
+        {media.caption}
+
+        {media.caption && media.credit && " — "}
+
+        {media.credit && (
+          <span>
+            Credit: {media.credit}
+          </span>
+        )}
+      </figcaption>
+    )
+  }
 </figure>

@@ -4,10 +4,7 @@ import SectionContainer from "../components/Section_Container.astro";
 import ProjectCollection from "../components/ProjectCollection.astro";
 import Hero from "../components/Hero/Hero.astro";
 import TitleSection from "../components/TitleSection.astro";
-
-import { Image } from "astro:assets";
-import profilePicture from "../assets/profile/profilePicture.png";
-
+import About from '../components/About/About.astro'
 import { site } from "../config/site";
 import { getProjects } from "../data/projects";
 import { websiteJsonLd } from "../lib/structured-data";
@@ -44,111 +41,7 @@ const projects = await getProjects();
     Sobre Federico
   </TitleSection>
 
-  <div
-    class="
-      flex
-      flex-col
-      gap-8
-      md:flex-row
-      md:items-start
-      md:justify-between
-    "
-  >
-    <!-- CONTENIDO -->
-    <div
-      class="
-        order-2
-        flex
-        flex-1
-        flex-col
-        gap-10
-        md:order-1
-      "
-    >
-      <!-- INFORMACIÓN -->
-      <div class="flex flex-col gap-6">
-        <div>
-          <h2>
-            Federico Dávalos
-          </h2>
-
-          <p>
-            Arquitecto
-          </p>
-
-          <p>
-            Buenos Aires, Argentina
-          </p>
-        </div>
-
-        <!-- REDES -->
-        <div
-          class="
-            flex
-            flex-wrap
-            gap-x-6
-            gap-y-2
-          "
-        >
-          <a href="#">
-            Instagram ↗
-          </a>
-
-          <a href="#">
-            LinkedIn ↗
-          </a>
-
-          <a href="mailto:correo@ejemplo.com">
-            Email ↗
-          </a>
-        </div>
-      </div>
-
-      <!-- DESCRIPCIÓN -->
-      <div
-        class="
-          flex
-          flex-col
-          gap-4
-        "
-      >
-        <p>
-          Federico Dávalos es arquitecto con más de
-          cinco años de experiencia en el desarrollo
-          de proyectos arquitectónicos.
-        </p>
-
-        <p>
-          Su práctica se desarrolla entre la
-          arquitectura, el diseño y la dirección
-          de obra.
-        </p>
-      </div>
-    </div>
-
-    <!-- IMAGEN -->
-    <div
-      class="
-        order-1
-        w-full
-        shrink-0
-        md:order-2
-        md:w-64
-      "
-    >
-      <Image
-        src={profilePicture}
-        alt="Federico Dávalos"
-        class="
-          aspect-square
-          h-full
-          w-full
-          object-cover
-        "
-        style="object-position: 50% 50%"
-      />
-    </div>
-  </div>
+ <About/>
 </SectionContainer>
   </main>
 </BaseLayout>

@@ -7,19 +7,69 @@ interface Props {
   eager?: boolean;
 }
 
-const { project, eager = false } = Astro.props;
+const {
+  project,
+  eager = false,
+} = Astro.props;
 ---
 
-<article>
-  {project.coverImage && (
-    <a href={`/${project.slug}/`} aria-label={`View ${project.title}`}>
-      <ProjectMedia media={project.coverImage} eager={eager} sizes="(min-width: 48rem) 50vw, 100vw" />
-    </a>
-  )}
-  <header>
-    <h3><a href={`/${project.slug}/`}>{project.title}</a></h3>
-    {(project.year || project.location) && (
-      <p>{[project.year, project.location].filter(Boolean).join(" · ")}</p>
-    )}
-  </header>
+<article
+class=" mb-10
+    md:mb-14"
+>
+<a
+        href={`/${project.slug}/`}
+        aria-label={`Ver proyecto ${project.title}`}
+        class="block "
+      >
+  <!-- IMAGEN -->
+  {
+    project.coverImage && (
+      
+        <ProjectMedia
+          media={project.coverImage}
+          eager={eager}
+          sizes="100vw"
+          showCaption={false}
+        />
+    )
+  }
+
+  <!-- INFORMACIÓN -->
+  <div
+    class="
+      flex
+        items-baseline
+        justify-between
+        gap-4
+        px-2
+        py-3
+        md:px-3
+        md:py-4
+    "
+  >
+    <h3
+      class="
+        text-base
+        font-medium
+        md:text-lg
+      "
+    >
+      
+        {project.title}
+    
+    </h3>
+
+    <p
+      class="
+        shrink-0
+        text-sm
+        text-(--color-muted)
+      "
+    >
+      {project.year}
+    </p>
+  </div>
+      </a>
+
 </article>
