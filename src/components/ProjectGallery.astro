@@ -1,0 +1,18 @@
+---
+import type { Media } from "../types/project";
+import ProjectMedia from "./ProjectMedia.astro";
+
+interface Props {
+  images: Media[];
+}
+
+const { images } = Astro.props;
+---
+
+{images.length > 0 && (
+  <section aria-label="Project gallery" class="project-gallery">
+    {images.map((image, index) => (
+      <ProjectMedia media={image} eager={index === 0} />
+    ))}
+  </section>
+)}

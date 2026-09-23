@@ -1,0 +1,17 @@
+---
+import type { Project } from "../types/project";
+import ProjectMetadata from "./ProjectMetadata.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<header class="project-header">
+  <p><a href="/">All projects</a></p>
+  <h1>{project.title}</h1>
+  <p class="project-description">{project.description}</p>
+  <ProjectMetadata project={project} />
+</header>

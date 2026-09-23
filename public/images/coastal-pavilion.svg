@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title">
+  <title id="title">Coastal Pavilion fixture image</title>
+  <rect width="1600" height="1000" fill="#dfe8e8"/>
+  <path d="M0 720h1600v280H0z" fill="#a9c2c5"/>
+  <path d="M180 650 520 330h900l-250 320z" fill="#6c7473"/>
+  <path d="M400 650V500m320 150V420m320 230V420m300 230V390" stroke="#343a39" stroke-width="24"/>
+</svg>

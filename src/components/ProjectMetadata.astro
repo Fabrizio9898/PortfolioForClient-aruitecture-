@@ -1,0 +1,29 @@
+---
+import type { Project } from "../types/project";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const metadata = [
+  ["Year", project.year],
+  ["Location", project.location],
+  ["Status", project.status],
+  ["Client", project.client],
+  ["Type", project.projectType],
+  ["Site area", project.siteArea],
+  ["Built area", project.builtArea],
+].filter((entry): entry is [string, string | number] => entry[1] !== undefined);
+---
+
+{metadata.length > 0 && (
+  <dl>
+    {metadata.map(([label, value]) => (
+      <div>
+        <dt>{label}</dt>
+        <dd>{value}</dd>
+      </div>
+    ))}
+  </dl>
+)}

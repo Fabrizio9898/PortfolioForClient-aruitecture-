@@ -1,0 +1,27 @@
+---
+import type { Project } from "../types/project";
+import ProjectPreview from "./ProjectPreview.astro";
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="project-list">
+  {projects.map((project, index) => (
+    <ProjectPreview
+      project={project}
+      eager={index === 0}
+    />
+  ))}
+</div>
+
+<style>
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+</style>

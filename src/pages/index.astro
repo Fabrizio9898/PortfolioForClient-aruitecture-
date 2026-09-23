@@ -1,17 +1,40 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Layout/Header.astro";
+import SectionContainer from "../components/Section_Container.astro";
+import ProjectCollection from "../components/ProjectCollection.astro";
 
+import { site } from "../config/site";
+import { getProjects } from "../data/projects";
+import { websiteJsonLd } from "../lib/structured-data";
+import Hero from "../components/Hero.astro";
+
+const projects = await getProjects();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  metadata={{
+    title: site.title,
+    description: site.description,
+    canonical: "/",
+  }}
+  jsonLd={websiteJsonLd()}
+>
+<Hero/>
+  <main
+  id="main-content"
+  class="px-4 md:px-6 lg:px-8"
+>
+  <div class="space-y-24">
+    <SectionContainer id="proyectos">
+      <ProjectCollection projects={projects} />
+    </SectionContainer>
+    <SectionContainer id="sobre-mi">
+      <h2>Sobre mí</h2>
+      <p>
+        Soy un arquitecto apasionado por el diseño y la innovación. Me especializo en crear espacios funcionales y estéticamente atractivos que mejoren la calidad de vida de las personas.
+      </p>
+    </SectionContainer>
+  </div>
+</main>
+</BaseLayout>

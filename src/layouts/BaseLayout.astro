@@ -1,0 +1,63 @@
+---
+import "../styles/global.css";
+import { absoluteUrl, site } from "../config/site";
+import JsonLd from "../components/JsonLd.astro";
+
+export interface SeoMetadata {
+  title: string;
+  description: string;
+  canonical?: string;
+  robots?: string;
+  openGraph?: {
+    type?: "website" | "article";
+    title?: string;
+    description?: string;
+    image?: string;
+  };
+  socialImage?: string;
+}
+
+interface Props {
+  metadata: SeoMetadata;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { metadata, jsonLd } = Astro.props;
+const canonical = metadata.canonical ?? Astro.url.pathname;
+const canonicalUrl = absoluteUrl(canonical);
+const socialImage = metadata.socialImage ?? metadata.openGraph?.image;
+const socialImageUrl = socialImage ? absoluteUrl(socialImage) : undefined;
+const pageTitle = metadata.title === site.title
+  ? metadata.title
+  : `${metadata.title} | ${site.title}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={metadata.description} />
+    <meta name="robots" content={metadata.robots ?? "index, follow"} />
+    <meta property="og:type" content={metadata.openGraph?.type ?? "website"} />
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:title" content={metadata.openGraph?.title ?? pageTitle} />
+    <meta property="og:description" content={metadata.openGraph?.description ?? metadata.description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {socialImageUrl && <meta property="og:image" content={socialImageUrl} />}
+    <meta name="twitter:card" content={socialImageUrl ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={metadata.openGraph?.title ?? pageTitle} />
+    <meta name="twitter:description" content={metadata.openGraph?.description ?? metadata.description} />
+    {socialImageUrl && <meta name="twitter:image" content={socialImageUrl} />}
+    {jsonLd && <JsonLd data={jsonLd} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+      <slot />
+  </body>
+</html>

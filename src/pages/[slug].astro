@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths } from "astro";
+import ProjectGallery from "../components/ProjectGallery.astro";
+import ProjectHeader from "../components/ProjectHeader.astro";
+import { getProjectBySlug, getProjects } from "../data/projects";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { projectJsonLd, websiteJsonLd } from "../lib/structured-data";
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { slug: project.slug } }));
+}) satisfies GetStaticPaths;
+
+const project = await getProjectBySlug(Astro.params.slug ?? "");
+
+if (!project) {
+  throw new Error(`Project not found: ${Astro.params.slug}`);
+}
+---
+
+<BaseLayout
+  metadata={{
+    title: project.title,
+    description: project.description,
+    canonical: `/${project.slug}/`,
+    openGraph: { type: "article" },
+    socialImage: project.coverImage?.src,
+  }}
+  jsonLd={[...websiteJsonLd(), projectJsonLd(project)]}
+>
+  <article>
+    <ProjectHeader project={project} />
+    <ProjectGallery images={project.images} />
+  </article>
+</BaseLayout>
