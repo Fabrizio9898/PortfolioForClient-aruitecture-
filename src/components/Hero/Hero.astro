@@ -1,5 +1,7 @@
 ---
 import HeroGrid from "./HeroGrid.astro";
+import Header from "./HeroHeader.astro";
+
 ---
 
 <section
@@ -25,97 +27,14 @@ import HeroGrid from "./HeroGrid.astro";
       <HeroGrid />
 
       <!-- HEADER -->
-      <div data-header-anchor class="shrink-0">
-       <header
-    data-site-header
-    class="
-      relative
-      z-20
-      flex
-      shrink-0
-      items-center
-      justify-between
-
-      bg-[var(--color-background)]
-      text-[var(--color-foreground)]
-
-      px-[var(--page-padding)]
-      py-4
-
-      text-base
-      font-medium
-      leading-none
-
-      sm:text-lg
-      md:py-5
-      md:text-xl
-    "
-  >
-    <!-- BRAND -->
-    <a
-      href="/"
-      class="
-        accent-nav
-        transition-colors
-        duration-200
-      "
-    >
-      Inicio
-    </a>
-
-    <!-- DESKTOP NAV -->
-    <nav class="hidden md:block">
-      <ul
-        class="
-          flex
-          items-center
-          gap-6
-          lg:gap-8
-        "
+      <div
+        data-header-anchor
+        class="shrink-0"
       >
-        <li>
-          <a
-            href="#proyectos"
-            class="
-              accent-nav
-              transition-colors
-              duration-200
-            "
-          >
-            Proyectos
-          </a>
-        </li>
-
-        <li>
-          <a
-            href="#sobre-mi"
-            class="
-              accent-nav
-              transition-colors
-              duration-200
-            "
-          >
-            Información
-          </a>
-        </li>
-      </ul>
-    </nav>
-
-    <!-- MENU -->
-    <button
-      type="button"
-      class="
-        cursor-pointer
-        accent-nav
-        transition-colors
-        duration-200
-      "
-    >
-      Menu
-    </button>
-  </header>
+        <Header />
       </div>
 
+      
       <div class="flex-1"></div>
 
       <footer

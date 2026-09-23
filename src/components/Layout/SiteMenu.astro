@@ -1,0 +1,332 @@
+---
+import BracketLink from "../ui/BracketLink.astro"
+
+const links = [
+  { href: "/", label: "Inicio" },
+  { href: "/#proyectos", label: "Proyectos" },
+  { href: "/#sobre-mi", label: "Sobre Federico" },
+];
+
+const socials = [
+  {
+    href: "https://instagram.com/",
+    label: "Instagram",
+  },
+  {
+    href: "https://linkedin.com/",
+    label: "LinkedIn",
+  },
+];
+---
+
+<dialog
+  id="site-menu"
+  aria-label="Navegación principal"
+>
+  <!-- CERRAR -->
+  <div class="menu-top">
+    <button
+      type="button"
+      data-menu-close
+      autofocus
+      aria-label="Cerrar menú"
+    >
+      Cerrar
+      <span
+        class="accent-arrow"
+        aria-hidden="true"
+      >
+        ×
+      </span>
+    </button>
+  </div>
+
+  <!-- NAVEGACIÓN -->
+  <nav aria-label="Navegación principal">
+    {
+      links.map((link) => (
+        <a href={link.href}>
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <!-- PARTE INFERIOR -->
+  <footer class="menu-bottom">
+    <BracketLink href="/#contacto">
+      Contacto
+    </BracketLink>
+
+    <div class="socials">
+      {
+        socials.map((social) => (
+          <a
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {social.label}
+          </a>
+        ))
+      }
+    </div>
+  </footer>
+</dialog>
+
+<style>
+  dialog {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+
+    margin: 0;
+    padding: 0 var(--page-padding);
+
+    border: 0;
+
+    background: var(--color-background);
+    color: var(--color-foreground);
+
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  dialog::backdrop {
+    background: var(--color-background);
+  }
+
+  /* =========================
+     TOP
+  ========================= */
+
+  .menu-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    min-height: 4.5rem;
+  }
+
+  .menu-top button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    min-height: 44px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+    color: inherit;
+
+    font: inherit;
+
+    cursor: pointer;
+  }
+
+  .menu-top button span {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  /* =========================
+     NAV
+  ========================= */
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    margin-top: 2rem;
+  }
+
+  nav a {
+    width: fit-content;
+
+    font-size: clamp(2.75rem, 9vw, 7rem);
+    font-weight: 500;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+
+    transition: color 200ms ease;
+  }
+
+  /* =========================
+     BOTTOM
+  ========================= */
+
+  .menu-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    margin-top: auto;
+    padding-bottom: 2rem;
+  }
+
+  .socials {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .socials a {
+    transition: color 200ms ease;
+  }
+
+  /* =========================
+     INTERACTION
+  ========================= */
+
+  @media (hover: hover) {
+    nav a:hover,
+    .socials a:hover,
+    .menu-top button:hover {
+      color: var(--color-accent-primary);
+    }
+  }
+
+  /* =========================
+     MOBILE
+  ========================= */
+
+  @media (max-width: 767px) {
+    nav {
+      margin-top: 1.5rem;
+    }
+
+    nav a {
+      font-size: clamp(2.5rem, 13vw, 4rem);
+    }
+
+    .menu-bottom {
+      padding-bottom: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  const menu =
+    document.querySelector<HTMLDialogElement>(
+      "#site-menu"
+    );
+
+  const triggers =
+    document.querySelectorAll<HTMLButtonElement>(
+      "[data-menu-trigger]"
+    );
+
+  if (menu) {
+    let scrollY = 0;
+
+    let savedStyle = {
+      position: "",
+      top: "",
+      width: "",
+      overflow: "",
+    };
+
+    const open = () => {
+      if (menu.open) return;
+
+      scrollY = window.scrollY;
+
+      const body = document.body.style;
+
+      savedStyle = {
+        position: body.position,
+        top: body.top,
+        width: body.width,
+        overflow: body.overflow,
+      };
+
+      menu.showModal();
+
+      Object.assign(body, {
+        position: "fixed",
+        top: `-${scrollY}px`,
+        width: "100%",
+        overflow: "hidden",
+      });
+
+      triggers.forEach((trigger) =>
+        trigger.setAttribute(
+          "aria-expanded",
+          "true"
+        )
+      );
+    };
+
+    const close = () => {
+      if (!menu.open) return;
+
+      Object.assign(
+        document.body.style,
+        savedStyle
+      );
+
+      menu.close();
+
+      window.scrollTo({
+        top: scrollY,
+        behavior: "instant",
+      });
+
+      triggers.forEach((trigger) =>
+        trigger.setAttribute(
+          "aria-expanded",
+          "false"
+        )
+      );
+    };
+
+    triggers.forEach((trigger) =>
+      trigger.addEventListener(
+        "click",
+        () =>
+          menu.open
+            ? close()
+            : open()
+      )
+    );
+
+    menu
+      .querySelector("[data-menu-close]")
+      ?.addEventListener("click", close);
+
+    menu
+      .querySelectorAll("a")
+      .forEach((link) =>
+        link.addEventListener(
+          "click",
+          close
+        )
+      );
+
+    menu.addEventListener(
+      "cancel",
+      (event) => {
+        event.preventDefault();
+        close();
+      }
+    );
+  }
+</script>

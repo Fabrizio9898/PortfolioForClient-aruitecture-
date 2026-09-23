@@ -1,6 +1,6 @@
 ---
 import type { Project } from "../types/project";
-import ProjectMetadata from "./ProjectMetadata.astro";
+import BracketLink from "./ui/BracketLink.astro";
 
 interface Props {
   project: Project;
@@ -9,9 +9,60 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<header class="project-header">
-  <p><a class="accent-link" href="/">All projects</a></p>
-  <h1>{project.title}</h1>
-  <p class="project-description">{project.description}</p>
-  <ProjectMetadata project={project} />
+<header class="project-toolbar">
+  <BracketLink href="#project-info">Información <span class="desktop-label">del proyecto</span></BracketLink>
+  <a href="/#proyectos" data-project-back class="accent-nav back-link" aria-label="Volver a proyectos">
+    <span class="accent-arrow" aria-hidden="true">×</span> Volver
+  </a>
+  <button type="button" class="accent-nav" data-menu-trigger aria-haspopup="dialog" aria-controls="site-menu" aria-expanded="false">Menú</button>
 </header>
+
+<div class="project-heading">
+  <p class="eyebrow">Arquitectura <span aria-hidden="true">/</span> {project.year ?? "Proyecto"}</p>
+  <h1>{project.title}</h1>
+  <div class="project-heading-bottom">
+    <p>{project.location}</p>
+    {project.projectType && <span class="accent-category">{project.projectType}</span>}
+  </div>
+</div>
+
+<style>
+  .project-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.5rem;
+    padding: 0.75rem var(--page-padding);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
+    font-size: 0.875rem;
+  }
+  .project-toolbar button { cursor: pointer; min-height: 44px; }
+  .back-link { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; }
+  .back-link span { font-size: 1.5rem; }
+  .desktop-label { display: none; }
+  .project-heading { padding: clamp(3rem, 7vw, 7rem) var(--page-padding) 2rem; }
+  .eyebrow { color: var(--color-muted); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .eyebrow span { color: var(--color-accent-primary); padding-inline: 0.5rem; }
+  h1 { margin-block: 1.25rem 2rem; max-width: 16ch; font-size: clamp(3rem, 8.5vw, 9rem); font-weight: 400; line-height: 0.95; letter-spacing: -0.055em; overflow-wrap: anywhere; }
+  .project-heading-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+  .project-heading-bottom p { color: var(--color-muted); }
+  .accent-category { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+  @media (min-width: 768px) { .desktop-label { display: inline; } }
+</style>
+
+<script>
+  document.querySelector<HTMLAnchorElement>("[data-project-back]")?.addEventListener("click", (event) => {
+    const referrer = document.referrer;
+    // El enlace sigue funcionando cuando se abre el proyecto directamente.
+    if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey &&
+        referrer && new URL(referrer).origin === location.origin && history.length > 1) {
+      event.preventDefault();
+      history.back();
+    }
+  });
+</script>

@@ -2,6 +2,9 @@
 import type { GetStaticPaths } from "astro";
 import ProjectGallery from "../components/ProjectGallery.astro";
 import ProjectHeader from "../components/ProjectHeader.astro";
+import ProjectMetadata from "../components/ProjectMetadata.astro";
+import ProjectMedia from "../components/ProjectMedia.astro";
+import BracketLink from "../components/ui/BracketLink.astro";
 import { getProjectBySlug, getProjects } from "../data/projects";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { projectJsonLd, websiteJsonLd } from "../lib/structured-data";
@@ -16,6 +19,13 @@ const project = await getProjectBySlug(Astro.params.slug ?? "");
 if (!project) {
   throw new Error(`Project not found: ${Astro.params.slug}`);
 }
+
+const projects = await getProjects();
+const nextProject = projects.length > 1
+  ? projects[(projects.findIndex((item) => item.slug === project.slug) + 1) % projects.length]
+  : undefined;
+const cover = project.coverImage ?? project.images[0];
+const gallery = project.images.filter((image) => image.src !== cover?.src);
 ---
 
 <BaseLayout
@@ -28,8 +38,57 @@ if (!project) {
   }}
   jsonLd={[...websiteJsonLd(), projectJsonLd(project)]}
 >
-  <article>
+  <main id="main-content">
     <ProjectHeader project={project} />
-    <ProjectGallery images={project.images} />
-  </article>
+    {cover && <div class="project-cover">
+      <ProjectMedia media={cover} eager showCaption={false} />
+      <p class="cover-caption"><span class="accent-arrow">01</span> {cover.caption ?? cover.alt}{cover.credit && ` — ${cover.credit}`}</p>
+    </div>}
+
+    <section id="project-info" class="project-info" aria-labelledby="info-title" tabindex="-1">
+      <div>
+        <h2 id="info-title">Sobre el proyecto <span class="accent-arrow" aria-hidden="true">↘</span></h2>
+        <p class="project-description">{project.description}</p>
+      </div>
+      <ProjectMetadata project={project} />
+    </section>
+
+    <div class="gallery-wrap">
+      <ProjectGallery images={gallery} startIndex={cover ? 2 : 1} />
+    </div>
+
+    <footer class="project-end">
+      {nextProject && (
+        <a class="next-project" href={`/${nextProject.slug}/`}>
+          <span class="next-label">Siguiente proyecto</span>
+          <span class="next-title">{nextProject.title}<span class="accent-arrow" aria-hidden="true">↗</span></span>
+          {nextProject.location && <span class="next-location">{nextProject.location}</span>}
+        </a>
+      )}
+      <div class="project-end-bottom">
+        <BracketLink href="/#proyectos">Todos los proyectos</BracketLink>
+        <span>Arquitectura · Diseño · Dirección de obra</span>
+      </div>
+    </footer>
+  </main>
 </BaseLayout>
+
+<style>
+  .project-cover { padding-inline: var(--page-padding); }
+  .project-cover :global(img) { max-height: 80svh; object-fit: cover; }
+  .cover-caption { display: flex; gap: 1rem; padding-top: 0.75rem; color: var(--color-muted); font-size: 0.75rem; }
+  .project-info { display: grid; gap: 3rem; padding: clamp(3.5rem, 8vw, 8rem) var(--page-padding); scroll-margin-top: 5rem; }
+  h2 { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; }
+  .project-description { max-width: 38ch; font-size: clamp(1.35rem, 2.5vw, 2.25rem); line-height: 1.4; letter-spacing: -0.025em; }
+  .gallery-wrap { padding-inline: var(--page-padding); }
+  .project-end { margin-top: clamp(4rem, 10vw, 9rem); padding: 0 var(--page-padding) 2rem; }
+  .next-project { display: block; border-top: 1px solid var(--color-border); padding-block: 2rem 4rem; }
+  .next-label { display: block; color: var(--color-muted); font-size: 0.75rem; }
+  .next-title { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-size: clamp(2rem, 6vw, 6rem); letter-spacing: -0.04em; line-height: 1.1; margin-block: 1.5rem 1rem; }
+  .next-title > span { flex-shrink: 0; }
+  .next-location { color: var(--color-muted); font-size: 0.875rem; }
+  .project-end-bottom { border-top: 1px solid var(--color-border); padding-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between; }
+  .project-end-bottom > span { color: var(--color-muted); font-size: 0.75rem; }
+  @media (hover: hover) { .next-project:hover .next-title { color: var(--color-accent-primary); } }
+  @media (min-width: 768px) { .project-info { grid-template-columns: 1.3fr 1fr; gap: 8vw; } }
+</style>

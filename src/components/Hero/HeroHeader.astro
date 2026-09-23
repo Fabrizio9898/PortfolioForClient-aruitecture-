@@ -1,0 +1,184 @@
+<header
+  data-site-header
+  class="
+    relative
+    z-20
+    flex
+    shrink-0
+    items-center
+
+    bg-(--color-background)
+    text-(--color-foreground)
+
+    px-(--page-padding)
+    py-4
+
+    text-base
+    font-medium
+    leading-none
+
+    sm:text-lg
+    md:justify-center
+    md:py-5
+    md:text-xl
+  "
+>
+  <!-- MOBILE: INICIO -->
+  <a
+    href="/"
+    class="
+      accent-nav
+      transition-colors
+      duration-200
+      md:hidden
+    "
+  >
+    Inicio
+  </a>
+
+  <!-- DESKTOP NAV -->
+  <nav
+    aria-label="Navegación principal"
+    class="hidden md:block"
+  >
+    <ul
+      class="
+        flex
+        items-center
+        gap-8
+        lg:gap-10
+      "
+    >
+      <li>
+        <a
+          href="/"
+          class="
+            accent-nav
+            transition-colors
+            duration-200
+          "
+        >
+          Inicio
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="/#proyectos"
+          class="
+            accent-nav
+            transition-colors
+            duration-200
+          "
+        >
+          Proyectos
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="/#sobre-mi"
+          class="
+            accent-nav
+            transition-colors
+            duration-200
+          "
+        >
+          Información
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="/#contacto"
+          class="
+            accent-nav
+            transition-colors
+            duration-200
+          "
+        >
+          Contacto
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- MOBILE: MENU -->
+  <button
+    type="button"
+    data-menu-trigger
+    aria-haspopup="dialog"
+    aria-controls="site-menu"
+    aria-expanded="false"
+    class="
+      ml-auto
+      cursor-pointer
+      accent-nav
+      transition-colors
+      duration-200
+      md:hidden
+    "
+  >
+    Menu
+  </button>
+</header>
+
+<style>
+  [data-site-header].is-fixed {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+  }
+</style>
+
+<script>
+  const header =
+    document.querySelector<HTMLElement>(
+      "[data-site-header]"
+    );
+
+  const anchor =
+    document.querySelector<HTMLElement>(
+      "[data-header-anchor]"
+    );
+
+  if (header && anchor) {
+    const updateHeader = () => {
+      anchor.style.height =
+        `${header.offsetHeight}px`;
+
+      header.classList.toggle(
+        "is-fixed",
+        anchor.getBoundingClientRect().top <= 0
+      );
+    };
+
+    let rafId = 0;
+
+    const scheduleUpdate = () => {
+      if (rafId) return;
+
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        updateHeader();
+      });
+    };
+
+    window.addEventListener(
+      "scroll",
+      scheduleUpdate,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      "resize",
+      scheduleUpdate
+    );
+
+    new ResizeObserver(
+      scheduleUpdate
+    ).observe(header);
+
+    updateHeader();
+  }
+</script>
