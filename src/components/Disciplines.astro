@@ -1,0 +1,49 @@
+---
+const disciplines = [
+  "Arquitectura",
+  "Arquitectura del paisaje",
+  "Arquitectura interior",
+  "Diseño de producto",
+];
+---
+
+<div class="disciplines">
+  {
+    disciplines.map((discipline) => (
+      <div class="discipline">
+        {discipline}
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .disciplines {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .discipline {
+    padding-block: 0.5rem;
+
+    border-bottom: 1px solid var(--color-border);
+
+    color: var(--color-foreground);
+
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .discipline:last-child {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .discipline {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+    }
+  }
+</style>

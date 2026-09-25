@@ -1,5 +1,6 @@
 ---
 import BracketLink from "../ui/BracketLink.astro"
+import ThemeToggle from "../ui/ThemeToggle.astro";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -25,6 +26,7 @@ const socials = [
 >
   <!-- CERRAR -->
   <div class="menu-top">
+    <ThemeToggle/>
     <button
       type="button"
       data-menu-close
@@ -119,9 +121,8 @@ dialog::backdrop {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-
   min-height: 4.5rem;
-
+  gap: 1rem;
   flex-shrink: 0;
 }
 

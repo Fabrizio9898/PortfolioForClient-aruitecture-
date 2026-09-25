@@ -1,0 +1,132 @@
+---
+import SunIcon from "../icons/Sun.astro";
+import MoonIcon from "../icons/Moon.astro";
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Cambiar tema"
+>
+  <span class="sr-only">
+    Cambiar tema
+  </span>
+
+  <SunIcon class="theme-icon theme-icon--sun" />
+
+  <MoonIcon class="theme-icon theme-icon--moon" />
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+
+    padding: 0;
+    border: 0;
+
+    background: transparent;
+    color: var(--color-foreground);
+
+    cursor: pointer;
+  }
+
+  .theme-icon {
+    position: absolute;
+
+    width: 1.25rem;
+    height: 1.25rem;
+
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  /* DARK por defecto */
+  .theme-icon--sun {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  .theme-icon--moon {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* LIGHT */
+  :global(html[data-theme="light"])
+    .theme-icon--sun {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  :global(html[data-theme="light"])
+    .theme-icon--moon {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  @media (hover: hover) {
+    .theme-toggle:hover {
+      color: var(--color-accent-primary);
+    }
+  }
+</style>
+
+<script>
+  const getTheme = () =>
+    localStorage.getItem("theme") === "light"
+      ? "light"
+      : "dark";
+
+  const setTheme = (
+    theme: "light" | "dark"
+  ) => {
+    document.documentElement.dataset.theme =
+      theme;
+
+    localStorage.setItem("theme", theme);
+  };
+
+  const initThemeToggle = () => {
+    setTheme(getTheme());
+
+    document
+      .querySelectorAll<HTMLButtonElement>(
+        "[data-theme-toggle]"
+      )
+      .forEach((button) => {
+        if (button.dataset.ready) return;
+
+        button.dataset.ready = "true";
+
+        button.addEventListener("click", () => {
+          const current =
+            document.documentElement.dataset
+              .theme === "light"
+              ? "light"
+              : "dark";
+
+          setTheme(
+            current === "light"
+              ? "dark"
+              : "light"
+          );
+        });
+      });
+  };
+
+  initThemeToggle();
+
+  document.addEventListener(
+    "astro:page-load",
+    initThemeToggle
+  );
+</script>

@@ -8,6 +8,7 @@ import About from '../components/About/About.astro'
 import { site } from "../config/site";
 import { getProjects } from "../data/projects";
 import { websiteJsonLd } from "../lib/structured-data";
+import Disciplines from "../components/Disciplines.astro";
 
 const projects = await getProjects();
 const featuredProjects = projects.filter(
@@ -36,6 +37,13 @@ const featuredProjects = projects.filter(
 </TitleSection>
 
 <ProjectCollection projects={featuredProjects} />
+    </SectionContainer>
+
+    <SectionContainer id="disciplines">
+<TitleSection>
+  Disciplinas
+</TitleSection>
+<Disciplines/>
     </SectionContainer>
 
     <!-- SOBRE FEDERICO -->

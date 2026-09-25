@@ -1,3 +1,8 @@
+---
+import ThemeToggle from "../ui/ThemeToggle.astro";
+
+
+---
 <header
   data-site-header
   class="
@@ -102,25 +107,47 @@
       </li>
     </ul>
   </nav>
+  
+ <div
+    class="
+      hidden
+      md:absolute
+      md:right-(--page-padding)
+      md:flex
+      md:items-center
+    "
+  >
+    <ThemeToggle />
+  </div>
 
   <!-- MOBILE: MENU -->
-  <button
-    type="button"
-    data-menu-trigger
-    aria-haspopup="dialog"
-    aria-controls="site-menu"
-    aria-expanded="false"
+   <div
     class="
       ml-auto
-      cursor-pointer
-      accent-nav
-      transition-colors
-      duration-200
+      flex
+      items-center
+      gap-4
       md:hidden
     "
   >
-    Menu
-  </button>
+    <ThemeToggle />
+
+    <button
+      type="button"
+      data-menu-trigger
+      aria-haspopup="dialog"
+      aria-controls="site-menu"
+      aria-expanded="false"
+      class="
+        cursor-pointer
+        accent-nav
+        transition-colors
+        duration-200
+      "
+    >
+      Menu
+    </button>
+  </div>
 </header>
 
 <style>
