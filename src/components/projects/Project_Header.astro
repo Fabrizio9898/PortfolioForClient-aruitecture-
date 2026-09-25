@@ -1,0 +1,115 @@
+---
+import ArrowBack from "../icons/ArrowBack.astro";
+---
+
+<header
+  data-project-header
+  class="
+    fixed
+    inset-x-0
+    top-0
+    z-50
+
+    flex
+    items-center
+    justify-between
+
+    bg-(--color-background)
+    text-(--color-foreground)
+
+    px-(--page-padding)
+    py-4
+
+    text-base
+    font-medium
+    leading-none
+
+    sm:text-lg
+    md:py-5
+    md:text-xl
+  "
+>
+  <!-- IZQUIERDA -->
+  <div class="flex items-center gap-3">
+    <button
+      type="button"
+      data-project-back
+      aria-label="Volver"
+      class="
+        flex
+        cursor-pointer
+        items-center
+        justify-center
+        accent-nav
+        transition-colors
+        duration-200
+      "
+    >
+      <ArrowBack />
+    </button>
+
+    <button
+      type="button"
+      data-project-info-trigger
+      aria-expanded="false"
+      class="
+        cursor-pointer
+        accent-nav
+        transition-colors
+        duration-200
+      "
+    >
+      Información
+    </button>
+  </div>
+
+  <!-- DERECHA -->
+  <button
+    type="button"
+    data-menu-trigger
+    aria-haspopup="dialog"
+    aria-controls="site-menu"
+    aria-expanded="false"
+    class="
+      cursor-pointer
+      accent-nav
+      transition-colors
+      duration-200
+    "
+  >
+    Menu
+  </button>
+</header>
+
+<script>
+  const backButton =
+    document.querySelector<HTMLButtonElement>(
+      "[data-project-back]"
+    );
+
+  backButton?.addEventListener("click", () => {
+    history.back();
+  });
+
+    const header =
+    document.querySelector<HTMLElement>(
+      "[data-project-header]"
+    );
+
+  if (header) {
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        "--project-header-height",
+        `${header.offsetHeight}px`
+      );
+    };
+
+    updateHeaderHeight();
+
+    const observer = new ResizeObserver(
+      updateHeaderHeight
+    );
+
+    observer.observe(header);
+  }
+</script>

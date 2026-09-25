@@ -13,18 +13,36 @@ export interface Media {
   sources?: MediaSource[];
 }
 
+export interface ProjectMedia extends Media {
+  id: string;
+}
+
+export type ProjectStatus = "completed" | "in-progress";
+
 export interface Project {
+  // Identidad
   id: string;
   slug: string;
   title: string;
+
+  // Contenido
   description: string;
+  content?: string[];
+
+  // Información del proyecto
   year?: number;
   location?: string;
-  status?: string;
+  status?: ProjectStatus;
   client?: string;
   projectType?: string;
+  featured?: boolean;
+
+  // Superficies
   siteArea?: string;
   builtArea?: string;
-  coverImage?: Media;
-  images: Media[];
+
+  // Media
+
+  coverImageId: string;
+  images: ProjectMedia[];
 }

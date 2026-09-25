@@ -39,49 +39,53 @@ import { heroSlots } from "../../data/hero";
         >
           <!-- FIRST -->
           <div class="h-1/2 w-full">
-            {slot.first.type === "image" ? (
-              <Image
-                src={slot.first.image}
-                alt=""
-                class="
-                  block
-                  h-full
-                  w-full
-                  object-cover
-                "
-              />
-            ) : (
-              <div
-                class="
-                  flex
-                  h-full
-                  w-full
-                  items-center
-                  justify-center
-                  bg-black
-                  px-6
-                  text-center
-                "
-              >
-                <p
+            {
+              slot.first.type === "image" ? (
+                <Image
+                  src={slot.first.image}
+                  alt=""
                   class="
-                    text-[clamp(1.75rem,7vw,3rem)]
-                    font-bold
-                    leading-[0.95]
-                    tracking-[0.04em]
-
-                    md:text-[clamp(2.5rem,4vw,5rem)]
-                    md:tracking-[0.06em]
+                    block
+                    h-full
+                    w-full
+                    object-cover
+                  "
+                />
+              ) : (
+                <div
+                  class="
+                    flex
+                    h-full
+                    w-full
+                    items-center
+                    justify-center
+                    bg-black
+                    px-6
+                    text-center
                   "
                 >
-                  {slot.first.lines.map((line) => (
-                    <span class="block">
-                      {line}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            )}
+                  <p
+                    class="
+                      text-[clamp(1.75rem,7vw,3rem)]
+                      font-bold
+                      leading-[0.95]
+                      tracking-[0.04em]
+
+                      md:text-[clamp(2.5rem,4vw,5rem)]
+                      md:tracking-[0.06em]
+                    "
+                  >
+                    {
+                      slot.first.lines.map((line) => (
+                        <span class="block">
+                          {line}
+                        </span>
+                      ))
+                    }
+                  </p>
+                </div>
+              )
+            }
           </div>
 
           <!-- SECOND -->
@@ -119,9 +123,6 @@ import { heroSlots } from "../../data/hero";
 
     if (!slots.length) return;
 
-    /*
-     * Buscamos sequence y stage.
-     */
     const sequenceEl =
       grid.closest<HTMLElement>(
         "[data-hero-sequence]"
@@ -134,44 +135,46 @@ import { heroSlots } from "../../data/hero";
 
     if (!sequenceEl || !stageEl) return;
 
-    /*
-     * Referencias ya validadas.
-     * Así TypeScript sabe que NO son null.
-     */
-    const sequence: HTMLElement = sequenceEl;
-    const stage: HTMLElement = stageEl;
+    const sequence: HTMLElement =
+      sequenceEl;
+
+    const stage: HTMLElement =
+      stageEl;
 
     let targetProgress = 0;
     let currentProgress = 0;
-
     let rafId = 0;
 
-    /*
-     * SMOOTH
-     *
-     * 0.05 = más suave / pesado
-     * 0.075 = recomendado
-     * 0.10 = más reactivo
-     * 0.15 = bastante directo
-     */
-    const ease = 0.075;
+    const mobile =
+      window.matchMedia(
+        "(max-width: 767px)"
+      );
 
-    /*
-     * Calcula dónde estamos dentro
-     * de la secuencia completa del Hero.
-     *
-     * Devuelve un número entre 0 y 1.
-     */
+    const getEase = () =>
+      mobile.matches
+        ? 0.055
+        : 0.075;
+
     function getScrollProgress() {
-      const distance = Math.max(
+      const totalDistance = Math.max(
         sequence.offsetHeight -
           stage.offsetHeight,
         1
       );
 
+      const exitSpace =
+        stage.offsetHeight * 0.35;
+
+      const animationDistance = Math.max(
+        totalDistance - exitSpace,
+        1
+      );
+
+      const scrolled =
+        -sequence.getBoundingClientRect().top;
+
       const progress =
-        -sequence.getBoundingClientRect().top /
-        distance;
+        scrolled / animationDistance;
 
       return Math.min(
         Math.max(progress, 0),
@@ -179,20 +182,13 @@ import { heroSlots } from "../../data/hero";
       );
     }
 
-    /*
-     * Renderiza las cards según
-     * el progreso suavizado.
-     */
-    function render(progress: number) {
-      /*
-       * Importante para responsive:
-       *
-       * en mobile pueden existir 4 slots,
-       * mientras que desktop puede ocultar uno.
-       */
+    function render(
+      progress: number
+    ) {
       const visibleSlots =
         Array.from(slots).filter(
-          (slot) => slot.clientHeight > 0
+          (slot) =>
+            slot.clientHeight > 0
         );
 
       visibleSlots.forEach(
@@ -204,37 +200,17 @@ import { heroSlots } from "../../data/hero";
 
           if (!track) return;
 
-          /*
-           * Cada card tiene su propio
-           * tramo de la animación.
-           *
-           * CARD 1
-           * ↓
-           * CARD 2
-           * ↓
-           * CARD 3
-           * ↓
-           * etc.
-           */
-          const slotProgress = Math.min(
-            Math.max(
-              progress *
-                visibleSlots.length -
-                index,
-              0
-            ),
-            1
-          );
+          const slotProgress =
+            Math.min(
+              Math.max(
+                progress *
+                  visibleSlots.length -
+                  index,
+                0
+              ),
+              1
+            );
 
-          /*
-           * El track mide 200%.
-           *
-           * Al moverlo exactamente
-           * una altura de slot:
-           *
-           * FIRST desaparece
-           * SECOND aparece.
-           */
           const y =
             slot.clientHeight *
             slotProgress;
@@ -245,47 +221,33 @@ import { heroSlots } from "../../data/hero";
       );
     }
 
-    /*
-     * Loop de suavizado.
-     *
-     * targetProgress:
-     * posición REAL del scroll.
-     *
-     * currentProgress:
-     * posición VISUAL.
-     *
-     * current persigue suavemente
-     * a target.
-     */
     function animate() {
       currentProgress +=
         (
           targetProgress -
           currentProgress
-        ) * ease;
+        ) * getEase();
 
-      /*
-       * Evitamos que la animación
-       * continúe infinitamente por
-       * diferencias microscópicas.
-       */
       const difference =
         Math.abs(
           targetProgress -
           currentProgress
         );
 
-      if (difference < 0.0001) {
+      if (
+        targetProgress === 1 &&
+        currentProgress > 0.985
+      ) {
+        currentProgress = 1;
+      } else if (
+        difference < 0.0001
+      ) {
         currentProgress =
           targetProgress;
       }
 
       render(currentProgress);
 
-      /*
-       * Continuamos únicamente mientras
-       * quede movimiento pendiente.
-       */
       if (
         Math.abs(
           targetProgress -
@@ -301,12 +263,6 @@ import { heroSlots } from "../../data/hero";
       }
     }
 
-    /*
-     * Cuando hacemos scroll NO movemos
-     * directamente las cards.
-     *
-     * Solo actualizamos el objetivo.
-     */
     function onScroll() {
       targetProgress =
         getScrollProgress();
@@ -319,12 +275,6 @@ import { heroSlots } from "../../data/hero";
       }
     }
 
-    /*
-     * Resize:
-     *
-     * recalculamos dimensiones y
-     * sincronizamos inmediatamente.
-     */
     function onResize() {
       targetProgress =
         getScrollProgress();
@@ -346,9 +296,6 @@ import { heroSlots } from "../../data/hero";
       onResize
     );
 
-    /*
-     * Estado inicial.
-     */
     targetProgress =
       getScrollProgress();
 

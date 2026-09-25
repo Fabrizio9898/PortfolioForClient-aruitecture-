@@ -1,0 +1,134 @@
+---
+import type { Project } from "../../types/project";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const statusLabels = {
+  "in-progress": "En desarrollo",
+  completed: "Finalizado",
+} as const;
+
+const statusLabel =
+  project.status
+    ? statusLabels[project.status]
+    : undefined;
+---
+
+<section
+  class="
+    min-h-screen
+    bg-(--color-background)
+    px-(--page-padding)
+    pt-8
+    pb-16
+
+    text-(--color-foreground)
+  "
+>
+  <!-- DATOS -->
+  <dl
+    class="
+      grid
+      grid-cols-[5rem_1fr]
+      gap-x-3
+      gap-y-1
+
+      text-base
+      font-semibold
+      leading-tight
+
+      md:grid-cols-[7rem_1fr]
+      md:text-lg
+    "
+  >
+    {project.client && (
+      <>
+        <dt class="text-(--color-muted)">
+          Cliente
+        </dt>
+        <dd>{project.client}</dd>
+      </>
+    )}
+
+    {project.status && (
+      <>
+        <dt class="text-(--color-muted)">
+          Estado
+        </dt>
+        <dd>{project.status}</dd>
+      </>
+    )}
+
+    {project.year && (
+      <>
+        <dt class="text-(--color-muted)">
+          Año
+        </dt>
+        <dd>{project.year}</dd>
+      </>
+    )}
+
+    {project.projectType && (
+      <>
+        <dt class="text-(--color-muted)">
+          Tipo
+        </dt>
+        <dd>{project.projectType}</dd>
+      </>
+    )}
+
+    {project.siteArea && (
+      <>
+        <dt class="text-(--color-muted)">
+            Terreno
+        </dt>
+        <dd>{project.siteArea}</dd>
+      </>
+    )}
+
+    {project.builtArea && (
+      <>
+        <dt class="text-(--color-muted)">
+          bSuperficie
+        </dt>
+        <dd>{project.builtArea}</dd>
+      </>
+    )}
+
+    {project.location && (
+      <>
+        <dt class="text-(--color-muted)">
+          Ubicación
+        </dt>
+        <dd>{project.location}</dd>
+      </>
+    )}
+  </dl>
+
+  <!-- TEXTO EDITORIAL -->
+  {project.content?.length ? (
+    <div
+      class="
+        mt-20
+        max-w-152
+
+        text-base
+        font-semibold
+        leading-[1.4]
+
+        md:mt-28
+        md:text-lg
+      "
+    >
+      {project.content.map((paragraph) => (
+        <p class="mb-6 last:mb-0">
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  ) : null}
+</section>

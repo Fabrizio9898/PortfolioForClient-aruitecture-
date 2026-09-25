@@ -5,48 +5,51 @@ interface Props {
   media: Media;
   eager?: boolean;
   sizes?: string;
-    showCaption?: boolean;
+  showCaption?: boolean;
+  imageClass?: string;
 }
 
-const { media, eager = false, sizes = "100vw" ,showCaption=true} = Astro.props;
+const {
+  media,
+  eager = false,
+  sizes = "100vw",
+  showCaption = true,
+  imageClass = "",
+} = Astro.props;
+
 const srcset = media.sources
   ?.map(({ src, width }) => `${src} ${width}w`)
   .join(", ");
 ---
 
 <figure>
-  <picture>
-    <img
-      src={media.src}
-      srcset={srcset}
-      sizes={srcset ? sizes : undefined}
-      alt={media.alt}
-      width={media.width}
-      height={media.height}
-      loading={eager ? "eager" : "lazy"}
-      fetchpriority={eager ? "high" : "auto"}
-      decoding="async"
-       class="
-        block
-        h-auto
-        w-full
-        object-cover
-      "
-    />
-  </picture>
-  {
-    showCaption && (media.caption || media.credit) && (
-      <figcaption>
-        {media.caption}
+  <img
+    src={media.src}
+    srcset={srcset}
+    sizes={srcset ? sizes : undefined}
+    alt={media.alt}
+    width={media.width}
+    height={media.height}
+    loading={eager ? "eager" : "lazy"}
+    fetchpriority={eager ? "high" : "auto"}
+    decoding="async"
+    class:list={[
+      "block w-full object-cover",
+      imageClass || "h-auto",
+    ]}
+  />
 
-        {media.caption && media.credit && " — "}
+  {showCaption && (media.caption || media.credit) && (
+    <figcaption>
+      {media.caption}
 
-        {media.credit && (
-          <span>
-            Credit: {media.credit}
-          </span>
-        )}
-      </figcaption>
-    )
-  }
+      {media.caption && media.credit && " — "}
+
+      {media.credit && (
+        <span>
+          Credit: {media.credit}
+        </span>
+      )}
+    </figcaption>
+  )}
 </figure>

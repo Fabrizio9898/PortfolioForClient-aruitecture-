@@ -1,0 +1,59 @@
+---
+import type { Project } from "../../types/project";
+
+interface Props {
+  images: Project["images"];
+}
+
+const { images } = Astro.props;
+---
+
+<section class="w-full bg-(--color-background)">
+  {images.map((image, index) => (
+    <figure class="w-full">
+
+      <img
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        loading={index === 0 ? "eager" : "lazy"}
+        class="
+          block
+          h-auto
+          w-full
+        "
+      />
+
+      <figcaption
+        class="
+          flex
+          items-center
+          gap-3
+
+          px-(--page-padding)
+          py-2
+
+          text-sm
+          leading-none
+        "
+      >
+        <span
+          class="
+            shrink-0
+            text-(--color-foreground)
+          "
+        >
+          {index + 1}
+        </span>
+
+        {image.caption && (
+          <span class="text-(--color-muted)">
+            {image.caption}
+          </span>
+        )}
+      </figcaption>
+
+    </figure>
+  ))}
+</section>

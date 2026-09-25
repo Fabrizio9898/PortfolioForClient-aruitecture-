@@ -1,5 +1,6 @@
 ---
 import type { Project } from "../types/project";
+import { getProjectCover } from "../lib/projects";
 import ProjectMedia from "./ProjectMedia.astro";
 
 interface Props {
@@ -11,34 +12,37 @@ const {
   project,
   eager = false,
 } = Astro.props;
+
+const coverImage = getProjectCover(project);
 ---
 
-<article
-class=" mb-10
-    md:mb-14"
->
-<a
-        href={`/${project.slug}/`}
-        aria-label={`Ver proyecto ${project.title}`}
-        class="block "
-      >
-  <!-- IMAGEN -->
-  {
-    project.coverImage && (
-      
-        <ProjectMedia
-          media={project.coverImage}
-          eager={eager}
-          sizes="100vw"
-          showCaption={false}
-        />
-    )
-  }
+<article class="mb-10 md:mb-14">
+  <a
+    href={`/${project.slug}/`}
+    aria-label={`Ver proyecto ${project.title}`}
+    class="block"
+  >
+    <!-- IMAGEN -->
+    {coverImage && (
+      <ProjectMedia
+        media={coverImage}
+        eager={eager}
+        sizes="100vw"
+        showCaption={false}
+        imageClass="
+          aspect-[4/3]
+          h-auto
+          w-full
+          object-cover
+          md:aspect-auto
+        "
+      />
+    )}
 
-  <!-- INFORMACIÓN -->
-  <div
-    class="
-      flex
+    <!-- INFORMACIÓN -->
+    <div
+      class="
+        flex
         items-baseline
         justify-between
         gap-4
@@ -46,30 +50,29 @@ class=" mb-10
         py-3
         md:px-3
         md:py-4
-    "
-  >
-    <h3
-      class="
-        text-base
-        font-medium
-        md:text-lg
       "
     >
-      
+      <h3
+        class="
+          text-[15px]
+          font-normal
+          md:text-lg
+        "
+      >
         {project.title}
-    
-    </h3>
+      </h3>
 
-    <p
-      class="
-        shrink-0
-        text-sm
-        text-(--color-muted)
-      "
-    >
-      {project.year}
-    </p>
-  </div>
-      </a>
-
+      {project.year && (
+        <p
+          class="
+            shrink-0
+            text-sm
+            text-(--color-muted)
+          "
+        >
+          {project.year}
+        </p>
+      )}
+    </div>
+  </a>
 </article>

@@ -1,5 +1,6 @@
 import { absoluteUrl, site } from "../config/site";
 import type { Project } from "../types/project";
+import { getProjectCover } from "./projects";
 
 type JsonLd = Record<string, unknown>;
 
@@ -22,7 +23,12 @@ export function websiteJsonLd(): JsonLd[] {
       jobTitle: "Architect",
       url: site.url.href,
       ...(site.architect.location
-        ? { homeLocation: { "@type": "Place", name: site.architect.location } }
+        ? {
+            homeLocation: {
+              "@type": "Place",
+              name: site.architect.location,
+            },
+          }
         : {}),
     });
   }
@@ -31,19 +37,34 @@ export function websiteJsonLd(): JsonLd[] {
 }
 
 export function projectJsonLd(project: Project): JsonLd {
+  const cover = getProjectCover(project);
+
   return {
     "@type": "CreativeWork",
     "@id": absoluteUrl(`/${project.slug}/#project`),
     url: absoluteUrl(`/${project.slug}/`),
     name: project.title,
     description: project.description,
+
     ...(project.year ? { dateCreated: String(project.year) } : {}),
+
     ...(project.location
-      ? { contentLocation: { "@type": "Place", name: project.location } }
+      ? {
+          contentLocation: {
+            "@type": "Place",
+            name: project.location,
+          },
+        }
       : {}),
-    ...(project.coverImage ? { image: absoluteUrl(project.coverImage.src) } : {}),
+
+    ...(cover ? { image: absoluteUrl(cover.src) } : {}),
+
     ...(site.architect.name
-      ? { creator: { "@id": absoluteUrl("/#architect") } }
+      ? {
+          creator: {
+            "@id": absoluteUrl("/#architect"),
+          },
+        }
       : {}),
   };
 }
