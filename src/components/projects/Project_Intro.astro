@@ -2,10 +2,16 @@
 import type { Project } from "../../types/project";
 
 interface Props {
-  project: Project;
+  project?: Project;
+  title?: string;
 }
 
-const { project } = Astro.props;
+const {
+  project,
+  title,
+} = Astro.props;
+
+const heading = title ?? project?.title;
 ---
 
 <section
@@ -37,10 +43,10 @@ const { project } = Astro.props;
       md:text-5xl
     "
   >
-    {project.title}
+    {heading}
   </h1>
 
-  {project.location && (
+  {project?.location && (
     <p
       class="
         mt-3

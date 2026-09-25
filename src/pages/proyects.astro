@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import {
+  Project_Header,
+  Project_Intro,
+} from "../components/projects";
+
+import { getProjects } from "../data/projects";
+
+const projects = await getProjects();
+
+const categories = [
+  "Todos",
+  "Residencial",
+  "Comercial",
+  "Cívico",
+  "Interiorismo",
+];
+---
+
+<BaseLayout
+  metadata={{
+    title: "Todos los proyectos",
+    description: "Selección de proyectos de arquitectura.",
+    canonical: "/proyectos/",
+  }}
+>
+  <Project_Header />
+
+  <main id="main-content">
+
+    <!-- CATEGORÍAS -->
+    <nav
+      class="
+        project-categories
+        px-(--page-padding)
+      "
+      aria-label="Categorías de proyectos"
+    >
+      {
+        categories.map((category) => (
+          <button type="button">
+            {category}
+          </button>
+        ))
+      }
+    </nav>
+
+    <!-- INTRO -->
+    <Project_Intro
+      title="Todos los proyectos"
+    />
+
+    <!-- GRID / LIST -->
+    <div
+      class="
+        view-switcher
+        px-(--page-padding)
+      "
+    >
+      <button
+        type="button"
+        class="is-active"
+      >
+        Grid
+      </button>
+
+      <span aria-hidden="true">/</span>
+
+      <button type="button">
+        Lista
+      </button>
+    </div>
+
+    <!-- PROYECTOS -->
+    <section
+      class="
+        projects-grid
+        px-(--page-padding)
+      "
+    >
+      {
+        projects.map((project) => (
+          <article>
+            <a href={`/${project.slug}/`}>
+              <h2>{project.title}</h2>
+            </a>
+          </article>
+        ))
+      }
+    </section>
+
+  </main>
+</BaseLayout>

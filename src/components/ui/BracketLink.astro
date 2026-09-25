@@ -1,26 +1,36 @@
 ---
 interface Props {
-  href: string;
+  href?: string;
+  type?: "button" | "submit" | "reset";
   class?: string;
+  selected?: boolean;
 }
 
 const {
   href,
+  type = "button",
   class: className = "",
+  selected = false,
+  ...attrs
 } = Astro.props;
+
+const Tag = href ? "a" : "button";
 ---
 
-<a
+<Tag
   href={href}
+  type={href ? undefined : type}
   class:list={[
     "bracket-link",
+    { "is-selected": selected },
     className,
   ]}
+  {...attrs}
 >
   <span class="bracket-link__text">
     <slot />
   </span>
-</a>
+</Tag>
 
 <style>
   .bracket-link {
@@ -33,28 +43,28 @@ const {
     align-items: center;
     justify-content: center;
 
+    border: 0;
     padding: 0.5rem 1rem;
 
+    background: transparent;
     color: var(--color-foreground);
 
+    font: inherit;
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1;
 
     white-space: nowrap;
-
-    overflow: hidden;
-    isolation: isolate;
+    cursor: pointer;
   }
 
   .bracket-link::before,
   .bracket-link::after {
     position: absolute;
-    z-index: 2;
 
     color: var(--color-accent-primary);
 
-    transition: color 200ms ease;
+    transition: color 180ms ease;
   }
 
   .bracket-link::before {
@@ -68,56 +78,42 @@ const {
   }
 
   .bracket-link__text {
-    position: relative;
-    z-index: 1;
+    padding: 0.25rem 0.4rem;
 
-    transition: color 200ms ease;
+    transition:
+      color 180ms ease,
+      background-color 180ms ease;
   }
 
-  .bracket-link__text::before {
-    content: "";
-
-    position: absolute;
-    z-index: -1;
-
-    inset: -0.5rem -0.75rem;
-
-    background: var(--color-accent-primary);
-
-    transform: scaleX(0);
-    transform-origin: center;
-
-    transition: transform 250ms ease;
-  }
-
+  /* Hover simple */
   @media (hover: hover) {
-    .bracket-link:hover .bracket-link__text::before {
-      transform: scaleX(1);
-    }
-
-    .bracket-link:hover .bracket-link__text {
-      color: var(--color-accent-foreground);
+    .bracket-link:hover {
+      color: var(--color-accent-primary);
     }
   }
 
-  .bracket-link:active .bracket-link__text::before,
-  .bracket-link:focus-visible .bracket-link__text::before {
-    transform: scaleX(1);
-  }
-
-  .bracket-link:active .bracket-link__text,
-  .bracket-link:focus-visible .bracket-link__text {
+  /* Estado seleccionado explícito */
+  .bracket-link.is-selected .bracket-link__text,
+  .bracket-link[aria-expanded="true"] .bracket-link__text,
+  .bracket-link[aria-pressed="true"] .bracket-link__text {
+    background: var(--color-accent-primary);
     color: var(--color-accent-foreground);
+  }
+
+  /* En selected los brackets siguen visibles */
+  .bracket-link.is-selected::before,
+  .bracket-link.is-selected::after,
+  .bracket-link[aria-expanded="true"]::before,
+  .bracket-link[aria-expanded="true"]::after,
+  .bracket-link[aria-pressed="true"]::before,
+  .bracket-link[aria-pressed="true"]::after {
+    color: var(--color-accent-primary);
   }
 
   @media (max-width: 767px) {
     .bracket-link {
       padding: 0.5rem 0.75rem;
       font-size: 0.8125rem;
-    }
-
-    .bracket-link__text::before {
-      inset-inline: -0.5rem;
     }
   }
 </style>
