@@ -34,7 +34,9 @@ export interface Project {
   location?: string;
   status?: ProjectStatus;
   client?: string;
-  projectType?: string;
+  projectType?: { title: string; slug: string };
+  specialties: { title: string; slug: string }[];
+  
   featured?: boolean;
 
   // Superficies

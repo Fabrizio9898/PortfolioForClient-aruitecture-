@@ -22,6 +22,12 @@ interface PayloadProject {
     slug: string;
   };
 
+  specialties?: {
+    id: number;
+    title: string;
+    slug: string;
+  }[];
+
   featured: boolean;
 
   siteArea?: string;
@@ -74,7 +80,14 @@ function mapProject(p: PayloadProject): Project {
 
     client: p.client,
 
-    projectType: p.projectType?.title,
+    projectType: p.projectType
+      ? { title: p.projectType.title, slug: p.projectType.slug }
+      : undefined,
+
+    specialties: (p.specialties ?? []).map((s) => ({
+      title: s.title,
+      slug: s.slug,
+    })),
 
     featured: p.featured,
 

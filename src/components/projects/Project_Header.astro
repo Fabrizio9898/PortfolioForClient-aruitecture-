@@ -1,6 +1,13 @@
 ---
 import ArrowBack from "../icons/ArrowBack.astro";
 import BracketLink from "../ui/BracketLink.astro";
+import SpecialtyDropdown from "../SpecialtyDropdown.astro";
+
+interface Props {
+  specialties?: { title: string; slug: string }[];
+}
+
+const { specialties } = Astro.props;
 ---
 
 <header
@@ -49,13 +56,13 @@ import BracketLink from "../ui/BracketLink.astro";
       <ArrowBack />
     </button>
 
-    <BracketLink
-  type="button"
-  data-project-info-trigger
-  aria-expanded="false"
->
-  Información
-</BracketLink>
+    {specialties ? (
+      <SpecialtyDropdown specialties={specialties} />
+) : (
+  <BracketLink type="button" data-project-info-trigger aria-expanded="false">
+    Información
+  </BracketLink>
+)}
   </div>
 
   <!-- DERECHA -->
@@ -107,4 +114,5 @@ import BracketLink from "../ui/BracketLink.astro";
 
     observer.observe(header);
   }
+  
 </script>

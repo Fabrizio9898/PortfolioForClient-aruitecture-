@@ -1,0 +1,105 @@
+---
+// components/projects/SpecialtyDropdown.astro
+interface Props {
+  specialties: { title: string; slug: string }[];
+}
+
+const { specialties } = Astro.props;
+---
+
+<div
+  data-specialty-dropdown
+  data-open="false"
+  class="group ml-4 flex items-start gap-3 md:ml-8"
+>
+  <!-- [ icono ] -->
+  <button
+    type="button"
+    data-specialty-toggle
+    aria-expanded="false"
+    aria-controls="specialty-list"
+    aria-label="Mostrar u ocultar especialidades"
+    class="flex cursor-pointer items-center gap-1.5 accent-nav transition-colors duration-200"
+  >
+    <span aria-hidden="true">[</span>
+    <svg
+      viewBox="0 0 12 12"
+      class="size-3 transition-transform duration-200 group-data-[open=true]:rotate-180"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2 4.5 6 8.5 10 4.5"></path>
+    </svg>
+    <span aria-hidden="true">]</span>
+  </button>
+
+  <!-- texto + lista -->
+  <div class="relative">
+    <button
+      type="button"
+      data-specialty-toggle
+      class="cursor-pointer whitespace-nowrap"
+    >
+      <span data-specialty-current>Todos</span>
+    </button>
+
+    <ul
+      id="specialty-list"
+      data-specialty-list
+      hidden
+      class="absolute left-0 top-full flex flex-col gap-2 bg-(--color-background) pt-3"
+    >
+      <li>
+        <a href="#todos" data-specialty="all" class="whitespace-nowrap">Todos</a>
+      </li>
+      {specialties.map((s) => (
+        <li>
+          <a href={`#${s.slug}`} data-specialty={s.slug} class="whitespace-nowrap">
+            {s.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  const dropdown = document.querySelector<HTMLElement>("[data-specialty-dropdown]");
+
+  if (dropdown) {
+    const toggles = dropdown.querySelectorAll<HTMLButtonElement>("[data-specialty-toggle]");
+    const list = dropdown.querySelector<HTMLElement>("[data-specialty-list]")!;
+    const current = dropdown.querySelector<HTMLElement>("[data-specialty-current]")!;
+
+    const setOpen = (open: boolean) => {
+      list.hidden = !open;
+      dropdown.dataset.open = String(open);
+      toggles.forEach((t) => t.setAttribute("aria-expanded", String(open)));
+      document.documentElement.style.setProperty(
+  "--specialty-list-height",
+  open ? `${list.offsetHeight}px` : "0px"
+);
+    };
+
+    toggles.forEach((t) =>
+      t.addEventListener("click", () =>
+        setOpen(dropdown.dataset.open !== "true")
+      )
+    );
+
+    list.querySelectorAll<HTMLAnchorElement>("[data-specialty]").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        current.textContent = link.textContent?.trim() ?? "Todos";
+         window.dispatchEvent(
+      new CustomEvent("specialty-change", { detail: link.dataset.specialty })
+    );
+        setOpen(false);
+      });
+    });
+  }
+</script>

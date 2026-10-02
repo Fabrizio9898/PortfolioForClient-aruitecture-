@@ -19,8 +19,11 @@ const projects = [
     status: "in-progress",
 
     client: "Private client",
-    projectType: "Residential",
-
+    projectType: { title: "Residencial", slug: "residencial" },
+    specialties: [
+      { title: "Arquitectura", slug: "arquitectura" },
+      { title: "Interiorismo", slug: "interiorismo" },
+    ],
     siteArea: "480 m²",
     builtArea: "210 m²",
 
@@ -81,7 +84,11 @@ const projects = [
     location: "Mar del Plata, Argentina",
     status: "in-progress",
 
-    projectType: "Civic",
+    projectType: { title: "Cívico", slug: "civico" },
+    specialties: [
+      { title: "Arquitectura", slug: "arquitectura" },
+      { title: "Urbanismo", slug: "urbanismo" },
+    ],
 
     siteArea: "1,200 m²",
     builtArea: "340 m²",
@@ -136,7 +143,11 @@ const projects = [
     status: "completed",
 
     client: "Private client",
-    projectType: "Residential",
+    projectType: { title: "Cívico", slug: "civico" },
+    specialties: [
+      { title: "Arquitectura", slug: "arquitectura" },
+      { title: "Urbanismo", slug: "urbanismo" },
+    ],
 
     siteArea: "2,400 m²",
     builtArea: "280 m²",
