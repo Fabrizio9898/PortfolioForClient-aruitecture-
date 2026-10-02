@@ -6,21 +6,26 @@ import ProjectMedia from "./ProjectMedia.astro";
 interface Props {
   project: Project;
   eager?: boolean;
+  variant?: "default" | "overlay";
+  aspect?: string;
 }
 
 const {
   project,
   eager = false,
+  variant = "default",
+  aspect = "aspect-[4/3] md:aspect-auto",
 } = Astro.props;
 
 const coverImage = getProjectCover(project);
+const isOverlay = variant === "overlay";
 ---
 
-<article class="mb-10 md:mb-14">
+<article class:list={[isOverlay ? "group" : "mb-10 md:mb-14"]}>
   <a
     href={`/${project.slug}/`}
     aria-label={`Ver proyecto ${project.title}`}
-    class="block"
+    class:list={["block", isOverlay && "relative overflow-hidden"]}
   >
     <!-- IMAGEN -->
     {coverImage && (
@@ -29,47 +34,33 @@ const coverImage = getProjectCover(project);
         eager={eager}
         sizes="100vw"
         showCaption={false}
-        imageClass="
-          aspect-[4/3]
-          h-auto
-          w-full
-          object-cover
-          md:aspect-auto
-        "
+  imageClass={`h-auto w-full object-cover ${aspect}`}
       />
     )}
 
     <!-- INFORMACIÓN -->
     <div
-      class="
-        flex
-        items-baseline
-        justify-between
-        gap-4
-        px-2
-        py-3
-        md:px-3
-        md:py-4
-      "
+      class:list={[
+        "flex items-baseline justify-between gap-4",
+        isOverlay
+          ? [
+              // móvil: debajo de la imagen, normal
+              "px-2 py-3",
+              // desktop: encima de la imagen, sube desde abajo al hover
+              "md:absolute md:inset-x-0 md:bottom-0 md:px-3 md:py-3",
+              "md:bg-black/60 md:text-white md:backdrop-blur-sm",
+              "md:translate-y-full md:transition-transform md:duration-300",
+              "md:group-hover:translate-y-0 md:group-focus-within:translate-y-0",
+            ]
+          : "px-2 py-3 md:px-3 md:py-4",
+      ]}
     >
-      <h3
-        class="
-          text-[15px]
-          font-normal
-          md:text-lg
-        "
-      >
+      <h3 class="text-[15px] font-normal md:text-lg">
         {project.title}
       </h3>
 
       {project.year && (
-        <p
-          class="
-            shrink-0
-            text-sm
-            text-(--color-muted)
-          "
-        >
+        <p class:list={["shrink-0 text-sm", isOverlay ? "text-(--color-muted) md:text-white/70" : "text-(--color-muted)"]}>
           {project.year}
         </p>
       )}

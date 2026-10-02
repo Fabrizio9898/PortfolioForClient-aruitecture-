@@ -1,7 +1,8 @@
 ---
 import type { Project } from "../types/project";
 import ProjectPreview from "./ProjectPreview.astro";
-import BracketLink from './ui/BracketLink.astro'
+import BracketLink from "./ui/BracketLink.astro";
+
 interface Props {
   projects: Project[];
 }
@@ -9,27 +10,25 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<div class="flex flex-col">
-  <!-- PROYECTOS -->
-  <div class="flex flex-col">
-    {
-      projects.map((project, index) => (
+<div class="flex flex-col md:grid md:grid-cols-3 md:gap-3">
+  {
+    projects.map((project, index) => (
+      <div class={index === 0 ? "md:col-span-3" : ""}>
         <ProjectPreview
           project={project}
           eager={index === 0}
+          variant="overlay"
+          aspect={
+            index === 0
+              ? "aspect-[4/3] md:aspect-[5/2]"
+              : "aspect-[4/3] md:aspect-[4/5]"
+          }
         />
-      ))
-    }
-  </div>
+      </div>
+    ))
+  }
 
-  <div
-    class="
-      flex
-      justify-end
-    "
-  >
-   <BracketLink href="/proyects">
-  Ver todos los proyectos
-</BracketLink>
+  <div class="flex justify-end md:items-center md:justify-center">
+    <BracketLink href="/proyectos">Ver todos los proyectos</BracketLink>
   </div>
 </div>
