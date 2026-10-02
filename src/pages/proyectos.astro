@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Project_Header } from "../components/projects";
+import ProjectPreview from "../components/ProjectPreview.astro";
+
+import { getProjects } from "../data/payload/projects";
+import { getSpecialties } from "../data/payload/specialities";
+import { getProjectTypes } from "../data/payload/project-types";
+
+const projects = await getProjects();
+const specialties = getSpecialties(projects);
+const projectTypes = getProjectTypes(projects);
+---
+
+<BaseLayout
+  metadata={{
+    title: "Todos los proyectos",
+    description: "Selección de proyectos de arquitectura.",
+    canonical: "/proyectos/",
+  }}
+>
+  <Project_Header specialties={specialties} />
+
+  <main id="main-content">
+    <!-- Título: queda detrás -->
+    <section
+  class="sticky top-0 z-0 px-(--page-padding) pt-[calc(var(--project-header-height,4rem)+var(--specialty-list-height,0px)+2rem)] pb-24"
+>
+      <h1 class="text-[clamp(3rem,14vw,9rem)] font-medium leading-[0.9] tracking-tight">
+        Todos los proyectos
+      </h1>
+    </section>
+
+    <!-- Contenido: sube y tapa el título -->
+    <div
+      class="relative z-10 min-h-screen bg-(--color-background) px-(--page-padding) pt-8 pb-16"
+    >
+      <!-- Grid / Lista -->
+      <div class="flex gap-2 text-base font-medium md:text-lg">
+        <button type="button" data-view="grid" aria-pressed="true"
+          class="cursor-pointer aria-[pressed=false]:text-(--color-muted)">
+          Grid
+        </button>
+        <span aria-hidden="true" class="text-(--color-muted)">/</span>
+        <button type="button" data-view="list" aria-pressed="false"
+          class="cursor-pointer aria-[pressed=false]:text-(--color-muted)">
+          Lista
+        </button>
+      </div>
+
+      <!-- Tipo de proyecto -->
+      <details class="group mt-4 text-base md:text-lg">
+        <summary
+          class="flex cursor-pointer list-none items-center gap-2 font-medium [&::-webkit-details-marker]:hidden"
+        >
+          <svg viewBox="0 0 12 12" class="size-3 transition-transform duration-200 group-open:rotate-180"
+            fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 4.5 6 8.5 10 4.5"></path>
+          </svg>
+          Tipo de proyecto
+        </summary>
+
+        <ul data-type-filter class="mt-2 flex flex-col gap-1">
+          {projectTypes.map((t) => (
+            <li>
+              <label class="flex cursor-pointer items-center gap-2 whitespace-nowrap">
+                <input type="checkbox" value={t.slug}
+                  class="size-3.5 cursor-pointer accent-(--color-foreground)" />
+                {t.title}
+              </label>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <!-- Proyectos -->
+      <section
+        data-projects
+        data-view="grid"
+        class="mt-10 grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-3"
+      >
+        {projects.map((project, i) => (
+          <div
+            data-project
+            data-type={project.projectType?.slug ?? ""}
+            data-specialties={project.specialties.map((s) => s.slug).join(" ")}
+          >
+            <ProjectPreview project={project} eager={i < 2} />
+          </div>
+        ))}
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  [data-projects][data-view="list"] {
+    grid-template-columns: 1fr;
+  }
+  [data-projects][data-view="list"] :global(img),
+  [data-projects][data-view="list"] :global(picture) {
+    display: none;
+  }
+  [data-projects][data-view="list"] :global(article) {
+    margin-bottom: 0;
+  }
+  [data-project][hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>("[data-projects]")!;
+  const items = section.querySelectorAll<HTMLElement>("[data-project]");
+
+  let specialty = "all";
+
+  const applyFilters = () => {
+    const types = [...document.querySelectorAll<HTMLInputElement>("[data-type-filter] input")]
+      .filter((c) => c.checked)
+      .map((c) => c.value);
+
+    items.forEach((el) => {
+      const okType = types.length === 0 || types.includes(el.dataset.type ?? "");
+      const okSpecialty =
+        specialty === "all" ||
+        (el.dataset.specialties ?? "").split(" ").includes(specialty);
+      el.hidden = !(okType && okSpecialty);
+    });
+  };
+
+  // Grid / Lista
+  const viewButtons = document.querySelectorAll<HTMLButtonElement>("[data-view]");
+  viewButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      section.dataset.view = btn.dataset.view;
+      viewButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    });
+  });
+
+  // Tipo (checkboxes)
+  document
+    .querySelectorAll<HTMLInputElement>("[data-type-filter] input")
+    .forEach((c) => c.addEventListener("change", applyFilters));
+
+  // Especialidad (viene del dropdown del header)
+  window.addEventListener("specialty-change", (e) => {
+    specialty = (e as CustomEvent<string>).detail;
+    applyFilters();
+  });
+</script>

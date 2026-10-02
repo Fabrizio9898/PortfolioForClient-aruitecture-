@@ -1,9 +1,15 @@
 ---
-interface Props {
+
+import type { HTMLAttributes } from "astro/types";
+
+
+interface Props extends Omit<HTMLAttributes<"a">, "class"> {
   href?: string;
   type?: "button" | "submit" | "reset";
   class?: string;
   selected?: boolean;
+tone?: "accent" | "neutral" | "footer";
+size?: "md" | "lg";
 }
 
 const {
@@ -11,6 +17,9 @@ const {
   type = "button",
   class: className = "",
   selected = false,
+  size = "md",
+    tone = "accent",
+
   ...attrs
 } = Astro.props;
 
@@ -22,6 +31,8 @@ const Tag = href ? "a" : "button";
   type={href ? undefined : type}
   class:list={[
     "bracket-link",
+    `bracket-link--${tone}`,
+`bracket-link--${size}`,
     { "is-selected": selected },
     className,
   ]}
@@ -35,11 +46,9 @@ const Tag = href ? "a" : "button";
 <style>
   .bracket-link {
     position: relative;
-
     display: inline-flex;
     width: fit-content;
     max-width: 100%;
-
     align-items: center;
     justify-content: center;
 
@@ -49,7 +58,7 @@ const Tag = href ? "a" : "button";
     background: transparent;
     color: var(--color-foreground);
 
-    font: inherit;
+    font-family: inherit;
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1;
@@ -61,10 +70,14 @@ const Tag = href ? "a" : "button";
   .bracket-link::before,
   .bracket-link::after {
     position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 
     color: var(--color-accent-primary);
 
-    transition: color 180ms ease;
+    transition:
+      color 180ms ease,
+      transform 220ms ease;
   }
 
   .bracket-link::before {
@@ -79,20 +92,92 @@ const Tag = href ? "a" : "button";
 
   .bracket-link__text {
     padding: 0.25rem 0.4rem;
-
-    transition:
-      color 180ms ease,
-      background-color 180ms ease;
   }
 
-  /* Hover simple */
+
+  /* =========================
+     ACCENT
+  ========================= */
+
   @media (hover: hover) {
     .bracket-link:hover {
       color: var(--color-accent-primary);
     }
   }
 
-  /* Estado seleccionado explícito */
+
+  /* =========================
+     NEUTRAL
+  ========================= */
+
+  .bracket-link--neutral {
+    color: var(--color-foreground);
+  }
+
+  .bracket-link--neutral::before,
+  .bracket-link--neutral::after {
+    color: currentColor;
+  }
+
+  @media (hover: hover) {
+    .bracket-link--neutral:hover {
+      color: inherit;
+      opacity: 0.7;
+    }
+  }
+
+
+  /* =========================
+     FOOTER
+  ========================= */
+
+  .bracket-link--footer {
+    color: #f5f5f5 !important;
+
+    font-size: clamp(2rem, 4vw, 4rem) !important;
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+
+    padding: 0.5rem 1.25rem;
+  }
+
+  .bracket-link--footer::before,
+  .bracket-link--footer::after {
+    color: #f5f5f5 !important;
+    font-size: 1em;
+    font-weight: 300;
+  }
+
+  .bracket-link--footer .bracket-link__text {
+    color: #f5f5f5 !important;
+  }
+
+  @media (hover: hover) {
+
+    .bracket-link--footer:hover {
+      color: #f5f5f5 !important;
+      opacity: 1;
+    }
+
+    .bracket-link--footer:hover::before {
+      transform:
+        translateY(-50%)
+        translateX(-4px);
+    }
+
+    .bracket-link--footer:hover::after {
+      transform:
+        translateY(-50%)
+        translateX(4px);
+    }
+  }
+
+
+  /* =========================
+     SELECTED
+  ========================= */
+
   .bracket-link.is-selected .bracket-link__text,
   .bracket-link[aria-expanded="true"] .bracket-link__text,
   .bracket-link[aria-pressed="true"] .bracket-link__text {
@@ -100,20 +185,30 @@ const Tag = href ? "a" : "button";
     color: var(--color-accent-foreground);
   }
 
-  /* En selected los brackets siguen visibles */
-  .bracket-link.is-selected::before,
-  .bracket-link.is-selected::after,
-  .bracket-link[aria-expanded="true"]::before,
-  .bracket-link[aria-expanded="true"]::after,
-  .bracket-link[aria-pressed="true"]::before,
-  .bracket-link[aria-pressed="true"]::after {
-    color: var(--color-accent-primary);
-  }
+.bracket-link--lg {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  padding: 0.75rem 1.5rem;
+}
+
+  /* =========================
+     MOBILE
+  ========================= */
 
   @media (max-width: 767px) {
+
     .bracket-link {
       padding: 0.5rem 0.75rem;
-      font-size: 0.8125rem;
     }
+
+    .bracket-link--footer {
+      font-size: 2.5rem !important;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .bracket-link--lg {
+  font-size: 1.75rem;
+  padding: 0.75rem 1.25rem;
+}
   }
 </style>

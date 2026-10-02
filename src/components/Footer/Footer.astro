@@ -1,0 +1,76 @@
+---
+import { settings, socials } from "../../utils/getSocials";
+import BracketLink from "../ui/BracketLink.astro";
+
+const nav = [
+  { label: "Inicio", href: "/" },
+  { label: "Proyectos", href: "/proyectos" },
+  { label: "Información", href: "/#studioInfo" },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer
+  id="contacto"
+  class="
+    scroll-m-20
+    bg-[#232323] text-[#f5f5f5]
+    px-(--page-padding)
+    pt-10 pb-8
+    text-base font-medium leading-tight
+    md:pt-16 md:text-lg
+  "
+>
+  <div class="grid grid-cols-2 gap-x-6 gap-y-20 md:grid-cols-4 md:items-end md:gap-y-0">
+
+    <!-- CTA: arriba en móvil, a la derecha en desktop -->
+    <div class="order-1 col-span-2 md:order-4 md:col-span-1 md:justify-self-end">
+      <BracketLink
+    href={settings.whatsappUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  tone="footer"
+>
+  Contáctanos
+</BracketLink>
+    </div>
+
+    <!-- Navegación -->
+    <nav aria-label="Navegación del pie" class="order-2">
+      <ul class="flex flex-col gap-2">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class="accent-nav transition-colors duration-200">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Redes -->
+    <ul class="order-3 flex flex-col gap-2">
+      {socials.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            target={item.external ? "_blank" : undefined}
+            rel={item.external ? "noopener noreferrer" : undefined}
+            class="accent-nav transition-colors duration-200"
+          >
+            {item.label}
+            {item.external && <span aria-hidden="true"> ↗</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Copyright: abajo en móvil, a la izquierda en desktop -->
+    <div class="order-4 col-span-2 mt-4 flex flex-col gap-1 md:order-1 md:col-span-1 md:mt-0">
+      <p>© {year} Federico Dávalos</p>
+      <p class="text-white/60">Todos los derechos reservados</p>
+    </div>
+
+  </div>
+</footer>

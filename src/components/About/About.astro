@@ -1,105 +1,54 @@
 ---
+// components/About/About.astro
 import { Image } from "astro:assets";
-import profilePicture from "../../assets/profile/profilePicture.png";
+import logo from "../../assets/logoforportfolio.svg"; // tu archivo exportado de Craft
 ---
 
-<article
-  class="
-    flex
-    flex-col
-    gap-8
-    md:flex-row
-    md:items-start
-  "
->
-  <!-- IMAGEN -->
-  <!-- <div
-    class="
-      w-full
-      shrink-0
-      md:w-64
-    "
-  >
+<div class="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-start md:gap-x-6">
+
+  <!-- CAJA CON IMAGEN -->
+  <div class="relative aspect-square w-full">
+
+    <!-- Grilla fina -->
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 opacity-40
+             bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)]
+             bg-size-[12.5%_12.5%]"
+    ></div>
+
+    <!-- Imagen: recortada, no deformada -->
     <Image
-      src={profilePicture}
-      alt="Federico Dávalos"
-      class="
-        aspect-square
-        h-full
-        w-full
-        object-cover
-      "
-      style="object-position: 50% 50%"
+      src={logo}
+      alt="Logo del estudio"
+      class="absolute inset-0 h-full w-full object-cover"
     />
-  </div> -->
 
-  <!-- CONTENIDO -->
-  <div
-    class="
-      flex
-      flex-1
-      flex-col
-      gap-6
-    "
-  >
-    <!-- TEXTO -->
-    <div
-      class="
-        flex
-        max-w-2xl
-        flex-col
-        gap-4
-        text-pretty
-        text-(--color-muted)
-        [&_strong]:font-medium
-        [&_strong]:text-(--color-accent-primary)
-      "
-    >
-      <p>
-        Con más de <strong>cinco años de experiencia</strong>,
-        desarrolla proyectos enfocados en la
-        <strong>arquitectura y el diseño</strong>,
-        desde las primeras ideas hasta su ejecución.
-      </p>
-
-      <p>
-        Su práctica se desarrolla entre el diseño,
-        la documentación y la
-        <strong>dirección de obra</strong>,
-        buscando soluciones claras y funcionales
-        para cada proyecto.
-      </p>
-    </div>
-
-    <!-- REDES -->
-    <div
-      class="
-        flex
-        flex-wrap
-        gap-x-6
-        gap-y-2
-      "
-    >
-      <a
-        href="#"
-        class="accent-link"
-      >
-        Instagram ↗
-      </a>
-
-      <a
-        href="#"
-        class="accent-link"
-      >
-        LinkedIn ↗
-      </a>
-
-      <a
-        href="mailto:correo@ejemplo.com"
-        class="accent-link"
-      >
-        Email ↗
-      </a>
-    </div>
+    <!-- Esquinas -->
+    <span aria-hidden="true" class="absolute left-0 top-0 size-4 border-l border-t border-(--color-foreground)"></span>
+    <span aria-hidden="true" class="absolute right-0 top-0 size-4 border-r border-t border-(--color-foreground)"></span>
+    <span aria-hidden="true" class="absolute bottom-0 left-0 size-4 border-b border-l border-(--color-foreground)"></span>
+    <span aria-hidden="true" class="absolute bottom-0 right-0 size-4 border-b border-r border-(--color-foreground)"></span>
   </div>
-</article>
+
+  <!-- TEXTO -->
+  <div class="flex flex-col gap-10">
+    <div class="space-y-6 text-2xl font-semibold leading-[1.1] tracking-tight md:text-4xl lg:text-5xl">
+      <p>
+        Con más de cinco años de experiencia, desarrolla proyectos enfocados en
+        arquitectura y diseño, desde las primeras ideas hasta su ejecución.
+      </p>
+      <p>
+        Su práctica se desarrolla entre el diseño, la documentación y la
+        dirección de obra, buscando soluciones claras y funcionales para cada proyecto.
+      </p>
+    </div>
+
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-base font-medium md:text-lg">
+      <li><a href="https://instagram.com/tuusuario" target="_blank" rel="noopener noreferrer" class="accent-nav">Instagram ↗</a></li>
+    
+      <li><a href="mailto:hola@tudominio.com" class="accent-nav">Email ↗</a></li>
+    </ul>
+  </div>
+
+</div>
